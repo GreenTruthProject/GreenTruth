@@ -103,11 +103,17 @@ function initNavbar() {
 function initMobileMenu() {
   const hamburger = document.getElementById("hamburger");
   const navLinks = document.getElementById("navLinks");
+  const hamburgerIcon = hamburger?.querySelector(".material-symbols-outlined");
 
   if (hamburger && navLinks) {
     hamburger.addEventListener("click", () => {
       navLinks.classList.toggle("active");
       hamburger.classList.toggle("active");
+
+      // Toggle icon between menu and close
+      if (hamburgerIcon) {
+        hamburgerIcon.textContent = navLinks.classList.contains("active") ? "close" : "menu";
+      }
     });
 
     // Close menu on link click
@@ -115,6 +121,9 @@ function initMobileMenu() {
       link.addEventListener("click", () => {
         navLinks.classList.remove("active");
         hamburger.classList.remove("active");
+        if (hamburgerIcon) {
+          hamburgerIcon.textContent = "menu";
+        }
       });
     });
   }

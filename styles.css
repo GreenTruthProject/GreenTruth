@@ -266,21 +266,31 @@ img {
   text-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
 }
 
+/* Nav Actions Container */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 .hamburger {
   display: none;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   cursor: pointer;
   padding: 5px;
 }
 
-.hamburger span {
-  width: 25px;
-  height: 2px;
-  background: var(--text-primary);
+.hamburger .material-symbols-outlined {
+  font-size: 2rem;
+  color: white;
   transition: var(--transition-normal);
+}
+
+.navbar.scrolled .hamburger .material-symbols-outlined {
+  color: var(--text-primary);
 }
 
 /* ============================================
@@ -901,6 +911,11 @@ img {
   color: white;
 }
 
+.visual-card.highlight-card .visual-icon,
+.visual-card.highlight-card .visual-icon .material-icons {
+  color: white;
+}
+
 .visual-icon {
   font-size: 2.5rem;
   margin-bottom: 15px;
@@ -1051,6 +1066,11 @@ img {
   transition: var(--transition-normal);
   position: relative;
   overflow: hidden;
+  /* Fixed height for consistent card sizing - match solution 1 */
+  height: auto;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
   /* Background image mosaic - each card shows a portion */
   --bg-image: url('resources/backgroundSolution.png');
 }
@@ -1063,7 +1083,8 @@ img {
   right: 0;
   bottom: 0;
   background-image: var(--bg-image);
-  background-size: auto;
+  /* Scale image to 3 columns x 8 rows grid - each card shows 1/24th of image */
+  background-size: 300% 800%;
   background-repeat: no-repeat;
   opacity: 1;
   z-index: 0;
@@ -1071,110 +1092,112 @@ img {
   border-radius: var(--radius-lg);
 }
 
-/* Position for each card in 3x8 grid - fixed pixel positions */
+/* Position for each card in 3x8 grid using percentage positioning */
+/* With background-size: 300% 800%, image is divided into 24 equal parts */
+/* Columns: 0%, 50%, 100% | Rows: 0%, 14.29%, 28.57%, 42.86%, 57.14%, 71.43%, 85.71%, 100% */
 
 /* Row 1 */
 .solution-card:nth-child(1) .solution-bg-layer {
-  background-position: 0px 0px;
+  background-position: 0% 0%;
 }
 
 .solution-card:nth-child(2) .solution-bg-layer {
-  background-position: -350px 0px;
+  background-position: 50% 0%;
 }
 
 .solution-card:nth-child(3) .solution-bg-layer {
-  background-position: -700px 0px;
+  background-position: 100% 0%;
 }
 
 /* Row 2 */
 .solution-card:nth-child(4) .solution-bg-layer {
-  background-position: 0px -280px;
+  background-position: 0% 14.29%;
 }
 
 .solution-card:nth-child(5) .solution-bg-layer {
-  background-position: -350px -280px;
+  background-position: 50% 14.29%;
 }
 
 .solution-card:nth-child(6) .solution-bg-layer {
-  background-position: -700px -280px;
+  background-position: 100% 14.29%;
 }
 
 /* Row 3 */
 .solution-card:nth-child(7) .solution-bg-layer {
-  background-position: 0px -560px;
+  background-position: 0% 28.57%;
 }
 
 .solution-card:nth-child(8) .solution-bg-layer {
-  background-position: -350px -560px;
+  background-position: 50% 28.57%;
 }
 
 .solution-card:nth-child(9) .solution-bg-layer {
-  background-position: -700px -560px;
+  background-position: 100% 28.57%;
 }
 
 /* Row 4 */
 .solution-card:nth-child(10) .solution-bg-layer {
-  background-position: 0px -840px;
+  background-position: 0% 42.86%;
 }
 
 .solution-card:nth-child(11) .solution-bg-layer {
-  background-position: -350px -840px;
+  background-position: 50% 42.86%;
 }
 
 .solution-card:nth-child(12) .solution-bg-layer {
-  background-position: -700px -840px;
+  background-position: 100% 42.86%;
 }
 
 /* Row 5 */
 .solution-card:nth-child(13) .solution-bg-layer {
-  background-position: 0px -1120px;
+  background-position: 0% 57.14%;
 }
 
 .solution-card:nth-child(14) .solution-bg-layer {
-  background-position: -350px -1120px;
+  background-position: 50% 57.14%;
 }
 
 .solution-card:nth-child(15) .solution-bg-layer {
-  background-position: -700px -1120px;
+  background-position: 100% 57.14%;
 }
 
 /* Row 6 */
 .solution-card:nth-child(16) .solution-bg-layer {
-  background-position: 0px -1400px;
+  background-position: 0% 71.43%;
 }
 
 .solution-card:nth-child(17) .solution-bg-layer {
-  background-position: -350px -1400px;
+  background-position: 50% 71.43%;
 }
 
 .solution-card:nth-child(18) .solution-bg-layer {
-  background-position: -700px -1400px;
+  background-position: 100% 71.43%;
 }
 
 /* Row 7 */
 .solution-card:nth-child(19) .solution-bg-layer {
-  background-position: 0px -1680px;
+  background-position: 0% 85.71%;
 }
 
 .solution-card:nth-child(20) .solution-bg-layer {
-  background-position: -350px -1680px;
+  background-position: 50% 85.71%;
 }
 
 .solution-card:nth-child(21) .solution-bg-layer {
-  background-position: -700px -1680px;
+  background-position: 100% 85.71%;
 }
 
 /* Row 8 */
 .solution-card:nth-child(22) .solution-bg-layer {
-  background-position: 0px -1960px;
+  background-position: 0% 100%;
 }
 
 .solution-card:nth-child(23) .solution-bg-layer {
-  background-position: -350px -1960px;
+  background-position: 50% 100%;
 }
 
 .solution-card:nth-child(24) .solution-bg-layer {
-  background-position: -700px -1960px;
+  background-position: 100% 100%;
 }
 
 /* Ensure content is above the background layer */
@@ -1268,6 +1291,8 @@ img {
   margin-bottom: 12px;
   line-height: 1.4;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  /* Fixed height for consistent sizing */
+  min-height: 48px;
 }
 
 .solution-problem {
@@ -1276,6 +1301,8 @@ img {
   margin-bottom: 20px;
   line-height: 1.6;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  /* Fixed height for consistent sizing */
+  min-height: 52px;
 }
 
 .solution-codes {
@@ -1283,6 +1310,8 @@ img {
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 20px;
+  flex-grow: 1;
+  align-content: flex-start;
 }
 
 .code-tag {
@@ -1333,6 +1362,9 @@ img {
   border-radius: var(--radius-md);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(34, 197, 94, 0.2);
+  /* Fixed height for consistent expanded section */
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .solution-details.show {
@@ -1621,10 +1653,76 @@ img {
   }
 }
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
 @media (max-width: 1024px) {
+
+  /* Hide nav links and show hamburger on tablets/medium screens */
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: 30px;
+    gap: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border-radius: 0 0 20px 20px;
+  }
+
+  .nav-links.active {
+    display: flex;
+    animation: slideDown 0.3s ease forwards;
+  }
+
+  .nav-links a {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--text-primary);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  .nav-links a:hover {
+    background: rgba(34, 197, 94, 0.2);
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  /* White background for navbar when menu is open */
+  .navbar:has(.nav-links.active) {
+    background: white !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .navbar:has(.nav-links.active) .logo-text {
+    -webkit-text-fill-color: var(--primary-green);
+  }
+
+  .navbar:has(.nav-links.active) .nav-btn .material-symbols-outlined {
+    color: var(--text-primary);
+  }
+
+  .navbar:has(.nav-links.active) .hamburger .material-symbols-outlined {
+    color: var(--text-primary);
+  }
+
   .solutions-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1645,15 +1743,58 @@ img {
     top: 100%;
     left: 0;
     right: 0;
-    background: rgba(15, 23, 42, 0.98);
+    background: white;
     flex-direction: column;
     padding: 30px;
     gap: 20px;
     text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border-radius: 0 0 20px 20px;
   }
 
   .nav-links.active {
     display: flex;
+    animation: slideDown 0.3s ease forwards;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .nav-links a {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--text-primary);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  .nav-links a:hover {
+    background: rgba(34, 197, 94, 0.2);
+  }
+
+  /* White background for navbar when menu is open */
+  .navbar:has(.nav-links.active) {
+    background: white !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .navbar:has(.nav-links.active) .logo-text {
+    -webkit-text-fill-color: var(--primary-green);
+  }
+
+  .navbar:has(.nav-links.active) .nav-btn .material-symbols-outlined {
+    color: var(--text-primary);
+  }
+
+  .navbar:has(.nav-links.active) .hamburger .material-symbols-outlined {
+    color: var(--text-primary);
   }
 
   .hamburger {
