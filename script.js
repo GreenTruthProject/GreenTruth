@@ -40,7 +40,7 @@ function initStatIconAnimation() {
     },
     {
       threshold: 0.5, // Trigger when 50% of icon is visible
-    }
+    },
   );
 
   icons.forEach((icon) => observer.observe(icon));
@@ -50,12 +50,12 @@ function initStatIconAnimation() {
  * Add background layer to each solution card for mosaic effect
  */
 function initSolutionBackgrounds() {
-  const solutionCards = document.querySelectorAll('.solution-card');
+  const solutionCards = document.querySelectorAll(".solution-card");
 
   solutionCards.forEach((card) => {
     // Create background layer element
-    const bgLayer = document.createElement('div');
-    bgLayer.className = 'solution-bg-layer';
+    const bgLayer = document.createElement("div");
+    bgLayer.className = "solution-bg-layer";
     // Insert as first child so it's behind other content
     card.insertBefore(bgLayer, card.firstChild);
   });
@@ -65,24 +65,24 @@ function initSolutionBackgrounds() {
  * Video player functionality
  */
 function initVideoPlayer() {
-  const placeholder = document.getElementById('videoPlaceholder');
-  const video = document.getElementById('productVideo');
+  const placeholder = document.getElementById("videoPlaceholder");
+  const video = document.getElementById("productVideo");
 
   if (placeholder && video) {
-    placeholder.addEventListener('click', () => {
-      placeholder.classList.add('hidden');
+    placeholder.addEventListener("click", () => {
+      placeholder.classList.add("hidden");
       video.play();
     });
 
     // Show placeholder again when video ends
-    video.addEventListener('ended', () => {
-      placeholder.classList.remove('hidden');
+    video.addEventListener("ended", () => {
+      placeholder.classList.remove("hidden");
     });
 
     // Show placeholder when video is paused and reset to beginning
-    video.addEventListener('pause', () => {
+    video.addEventListener("pause", () => {
       if (video.currentTime === 0) {
-        placeholder.classList.remove('hidden');
+        placeholder.classList.remove("hidden");
       }
     });
   }
@@ -92,12 +92,12 @@ function initVideoPlayer() {
  * Typing effect for hero badge
  */
 function initTypingEffect() {
-  const badge = document.querySelector('.hero-badge');
+  const badge = document.querySelector(".hero-badge");
   if (!badge) return;
 
   const originalText = badge.textContent;
-  badge.textContent = '';
-  badge.style.minWidth = '280px';
+  badge.textContent = "";
+  badge.style.minWidth = "280px";
 
   let charIndex = 0;
   const typingSpeed = 40; // Faster typing (was 80ms)
@@ -144,7 +144,9 @@ function initMobileMenu() {
 
       // Toggle icon between menu and close
       if (hamburgerIcon) {
-        hamburgerIcon.textContent = navLinks.classList.contains("active") ? "close" : "menu";
+        hamburgerIcon.textContent = navLinks.classList.contains("active")
+          ? "close"
+          : "menu";
       }
     });
 
@@ -279,34 +281,34 @@ function initScrollReveal() {
   // Add scroll-reveal class to elements that should animate
   const animationConfig = [
     // Stats section
-    { selector: '.stat-card', animation: 'fade-up', stagger: 100 },
+    { selector: ".stat-card", animation: "fade-up", stagger: 100 },
     // About section
-    { selector: '.about-intro', animation: 'fade-right', stagger: 0 },
-    { selector: '.about-mission', animation: 'fade-up', stagger: 0 },
-    { selector: '.feature-item', animation: 'fade-left', stagger: 80 },
-    { selector: '.visual-card', animation: 'fade-left', stagger: 150 },
+    { selector: ".about-intro", animation: "fade-right", stagger: 0 },
+    { selector: ".about-mission", animation: "fade-up", stagger: 0 },
+    { selector: ".feature-item", animation: "fade-left", stagger: 80 },
+    { selector: ".visual-card", animation: "fade-left", stagger: 150 },
     // Philosophy section
-    { selector: '.principle-card', animation: 'fade-up', stagger: 100 },
+    { selector: ".principle-card", animation: "fade-up", stagger: 100 },
     // Solutions section
-    { selector: '.solution-filter', animation: 'fade-up', stagger: 0 },
-    { selector: '.solution-card', animation: 'zoom-in', stagger: 50 },
+    { selector: ".solution-filter", animation: "fade-up", stagger: 0 },
+    { selector: ".solution-card", animation: "zoom-in", stagger: 50 },
     // Quote section
-    { selector: '.quote-content', animation: 'fade-up', stagger: 0 },
+    { selector: ".quote-content", animation: "fade-up", stagger: 0 },
     // CTA section
-    { selector: '.cta-content h2', animation: 'fade-up', stagger: 0 },
-    { selector: '.cta-content > p', animation: 'fade-up', stagger: 0 },
-    { selector: '.cta-value', animation: 'fade-up', stagger: 150 },
+    { selector: ".cta-content h2", animation: "fade-up", stagger: 0 },
+    { selector: ".cta-content > p", animation: "fade-up", stagger: 0 },
+    { selector: ".cta-value", animation: "fade-up", stagger: 150 },
     // Section headers
-    { selector: '.section-tag', animation: 'fade-down', stagger: 0 },
-    { selector: '.section-title', animation: 'fade-up', stagger: 0 },
-    { selector: '.section-subtitle', animation: 'fade-up', stagger: 0 },
+    { selector: ".section-tag", animation: "fade-down", stagger: 0 },
+    { selector: ".section-title", animation: "fade-up", stagger: 0 },
+    { selector: ".section-subtitle", animation: "fade-up", stagger: 0 },
   ];
 
   // Apply initial hidden state and set up observer
-  animationConfig.forEach(config => {
+  animationConfig.forEach((config) => {
     const elements = document.querySelectorAll(config.selector);
     elements.forEach((el, index) => {
-      el.classList.add('scroll-reveal', config.animation);
+      el.classList.add("scroll-reveal", config.animation);
       el.style.transitionDelay = `${index * config.stagger}ms`;
     });
   });
@@ -316,7 +318,7 @@ function initScrollReveal() {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
+          entry.target.classList.add("revealed");
           // Optional: unobserve after animation for performance
           // observer.unobserve(entry.target);
         }
@@ -324,12 +326,12 @@ function initScrollReveal() {
     },
     {
       threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    }
+      rootMargin: "0px 0px -50px 0px",
+    },
   );
 
   // Observe all scroll-reveal elements
-  document.querySelectorAll('.scroll-reveal').forEach(el => {
+  document.querySelectorAll(".scroll-reveal").forEach((el) => {
     observer.observe(el);
   });
 }

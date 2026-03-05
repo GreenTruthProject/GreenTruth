@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Green Truth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body class="bg-slate-100 flex items-center justify-center min-h-screen">
+    <div class="w-full px-4 max-w-5xl">
+      <div class="grid gap-6 lg:grid-cols-2 items-start">
+        <section
+          id="login-card"
+          class="bg-white p-10 rounded-2xl shadow-xl border border-gray-200 space-y-6"
+        >
+          <div>
+            <h1 class="text-3xl font-extrabold text-slate-800">Welcome Back</h1>
+            <p class="text-slate-500 mt-2">
+              Log in to access your Green Truth dashboard.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <input
+              type="email"
+              id="login-email"
+              placeholder="Email"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+            />
+            <input
+              type="password"
+              id="login-password"
+              placeholder="Password"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+            />
+
+            <button
+              id="btn-login"
+              class="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-all active:scale-95"
+            >
+              Log In
+            </button>
+
+            <p
+              id="login-message"
+              class="mt-1 text-sm text-center text-red-500 font-medium min-h-[1.5rem]"
+            ></p>
+          </div>
+        </section>
+
+        <section
+          class="bg-white p-10 rounded-2xl shadow-xl border border-gray-200 space-y-6"
+        >
+          <div>
+            <h2 class="text-2xl font-bold text-slate-800">Create an account</h2>
+            <p class="text-slate-500 mt-1 text-sm">
+              Add your avatar so teammates immediately recognize you.
+            </p>
+          </div>
+
+          <div class="space-y-4">
+            <input
+              type="email"
+              id="signup-email"
+              placeholder="Email"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+            />
+            <input
+              type="password"
+              id="signup-password"
+              placeholder="Password"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+            />
+            <input
+              type="text"
+              id="username"
+              placeholder="Display name"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+            />
+            <label class="block text-sm text-slate-600">
+              Avatar image
+              <input
+                type="file"
+                id="avatarInput"
+                accept="image/*"
+                class="mt-2 w-full border border-dashed border-gray-300 rounded-xl p-3 text-sm text-slate-500"
+              />
+            </label>
+
+            <button
+              onclick="handleSignup()"
+              class="w-full bg-gradient-to-r from-green-600 to-emerald-500 text-white py-3 rounded-xl font-semibold hover:opacity-95 transition-all active:scale-95"
+            >
+              Sign Up
+            </button>
+
+            <p
+              id="signup-message"
+              class="mt-1 text-sm text-center text-red-500 font-medium min-h-[1.5rem]"
+            ></p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      const SUPABASE_URL = "https://pnyjxbrkiifrsrtmnxro.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueWp4YnJraWlmcnNydG1ueHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MDgxOTAsImV4cCI6MjA4ODE4NDE5MH0.uCYdN3SaANJZc5XqT1AdcbjlrFHCY7xaS2ff_y4z84c";
+      const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const loginMsg = document.getElementById("login-message");
+      const signupMsg = document.getElementById("signup-message");
+
+      _supabase.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN" || session) {
+          window.location.href = "dashboard.html";
+        }
+      });
+
+      document.getElementById("btn-login").onclick = async () => {
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+
+        loginMsg.innerText = "Checking credentials...";
+        const { error } = await _supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          loginMsg.innerText = error.message;
+        } else {
+          loginMsg.innerText = "";
+        }
+      };
+
+      async function handleSignup() {
+        const email = document.getElementById("signup-email").value.trim();
+        const password = document.getElementById("signup-password").value;
+        const username = document.getElementById("username").value.trim();
+
+        if (!email || !password || !username) {
+          signupMsg.innerText =
+            "Email, password, and display name are required.";
+          return;
+        }
+
+        signupMsg.innerText = "Creating account...";
+        try {
+          await signUpWithAvatar(email, password, username);
+          signupMsg.innerText =
+            "Signup successful! Check your email to confirm.";
+        } catch (error) {
+          signupMsg.innerText = error?.message || "Unable to create account.";
+        }
+      }
+
+      async function signUpWithAvatar(email, password, username) {
+        const { data, error } = await _supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { username },
+          },
+        });
+
+        if (error) throw error;
+
+        const user = data.user;
+        if (!user) return;
+
+        const avatarFile = document.getElementById("avatarInput").files?.[0];
+        let avatarUrl = null;
+
+        if (avatarFile) {
+          const fileExt = avatarFile.name.split(".").pop();
+          const fileName = `${user.id}.${fileExt}`;
+          const { error: uploadError } = await _supabase.storage
+            .from("avatars")
+            .upload(fileName, avatarFile, { upsert: true });
+
+          if (uploadError) throw uploadError;
+
+          const { data: publicData } = _supabase.storage
+            .from("avatars")
+            .getPublicUrl(fileName);
+          avatarUrl = publicData.publicUrl;
+        }
+
+        const { error: profileError } = await _supabase.from("profiles").upsert(
+          {
+            id: user.id,
+            email: user.email,
+            username,
+            avatar_url: avatarUrl,
+          },
+          { returning: "minimal" },
+        );
+
+        if (profileError) throw profileError;
+
+        // Keep essential profile fields in auth metadata as fallback
+        const { error: metadataError } = await _supabase.auth.updateUser({
+          data: {
+            username,
+            avatar_url: avatarUrl,
+          },
+        });
+
+        if (metadataError) {
+          console.warn(
+            "Could not update auth metadata:",
+            metadataError.message,
+          );
+        }
+      }
+    </script>
+  </body>
+</html>
