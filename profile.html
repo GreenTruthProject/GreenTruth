@@ -400,6 +400,10 @@
             ><span class="material-symbols-outlined">sports_esports</span>Green
             Combat</a
           >
+          <a href="ConfirmAction.html"
+            ><span class="material-symbols-outlined">check_box</span>Confirm
+            Action</a
+          >
           <a id="signOutBtn" href="#"
             ><span class="material-symbols-outlined">logout</span>Sign Out</a
           >
@@ -432,14 +436,16 @@
               <p>Coins: <span id="profile_coin">0</span></p>
               <p>Daily Streak: <span id="profile_streak">0</span></p>
             </div>
-            <button id="profile_claim_coin" type="button">Claim Daily Coin</button>
+            <button id="profile_claim_coin" type="button">
+              Claim Daily Coin
+            </button>
             <p id="profile_message"></p>
           </div>
         </main>
       </section>
     </div>
 
-                <script>
+    <script>
       const profile_SUPABASE_URL = "https://pnyjxbrkiifrsrtmnxro.supabase.co";
       const profile_SUPABASE_ANON_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueWp4YnJraWlmcnNydG1ueHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MDgxOTAsImV4cCI6MjA4ODE4NDE5MH0.uCYdN3SaANJZc5XqT1AdcbjlrFHCY7xaS2ff_y4z84c";
@@ -454,7 +460,9 @@
       const profile_avatarPreview = document.getElementById(
         "profile_avatar_preview",
       );
-      const profile_avatarInput = document.getElementById("profile_avatar_input");
+      const profile_avatarInput = document.getElementById(
+        "profile_avatar_input",
+      );
       const profile_avatarUploadBtn = document.getElementById(
         "profile_avatar_upload",
       );
@@ -500,11 +508,12 @@
       }
 
       async function profile_getOrCreateRow(profile_user) {
-        const { data: profile_data, error: profile_error } = await profile_supabase
-          .from("profiles")
-          .select("id, username, avatar_url, coin, streak, last_coin_date")
-          .eq("id", profile_user.id)
-          .maybeSingle();
+        const { data: profile_data, error: profile_error } =
+          await profile_supabase
+            .from("profiles")
+            .select("id, username, avatar_url, coin, streak, last_coin_date")
+            .eq("id", profile_user.id)
+            .maybeSingle();
 
         if (profile_error) {
           console.error("profile_getOrCreateRow read error:", profile_error);
@@ -535,7 +544,10 @@
             .maybeSingle();
 
         if (profile_insertError) {
-          console.error("profile_getOrCreateRow create error:", profile_insertError);
+          console.error(
+            "profile_getOrCreateRow create error:",
+            profile_insertError,
+          );
           return null;
         }
 
@@ -565,7 +577,9 @@
           profile_userLabel.textContent = profile_username;
           profile_usernameInput.value = profile_data.username || "";
           profile_coinEl.textContent = String(Number(profile_data.coin || 0));
-          profile_streakEl.textContent = String(Number(profile_data.streak || 0));
+          profile_streakEl.textContent = String(
+            Number(profile_data.streak || 0),
+          );
           profile_avatarPreview.src =
             profile_data.avatar_url || profile_DEFAULT_AVATAR;
         } catch (profile_error) {
@@ -604,7 +618,10 @@
           profile_setMessage("Username updated.");
           await profile_load();
         } catch (profile_error) {
-          console.error("profile_updateUsername unexpected error:", profile_error);
+          console.error(
+            "profile_updateUsername unexpected error:",
+            profile_error,
+          );
         }
       }
 
@@ -628,14 +645,19 @@
             });
 
           if (profile_uploadError) {
-            console.error("profile_uploadAvatar upload error:", profile_uploadError);
+            console.error(
+              "profile_uploadAvatar upload error:",
+              profile_uploadError,
+            );
             profile_setMessage("Failed to upload avatar.");
             return;
           }
 
           const {
             data: { publicUrl: profile_publicUrl },
-          } = profile_supabase.storage.from("avatars").getPublicUrl(profile_storagePath);
+          } = profile_supabase.storage
+            .from("avatars")
+            .getPublicUrl(profile_storagePath);
 
           const { error: profile_updateError } = await profile_supabase
             .from("profiles")
@@ -648,7 +670,10 @@
             );
 
           if (profile_updateError) {
-            console.error("profile_uploadAvatar update error:", profile_updateError);
+            console.error(
+              "profile_uploadAvatar update error:",
+              profile_updateError,
+            );
             profile_setMessage("Avatar uploaded but profile update failed.");
             return;
           }
@@ -656,7 +681,10 @@
           profile_setMessage("Avatar updated.");
           await profile_load();
         } catch (profile_error) {
-          console.error("profile_uploadAvatar unexpected error:", profile_error);
+          console.error(
+            "profile_uploadAvatar unexpected error:",
+            profile_error,
+          );
         }
       }
 
@@ -672,7 +700,9 @@
           }
 
           const profile_today = profile_dateString(new Date());
-          const profile_lastDate = profile_dateString(profile_data.last_coin_date);
+          const profile_lastDate = profile_dateString(
+            profile_data.last_coin_date,
+          );
           if (profile_lastDate && profile_lastDate === profile_today) {
             profile_setMessage("Daily coin already claimed today.");
             return;
@@ -701,7 +731,10 @@
             .eq("id", profile_user.id);
 
           if (profile_updateError) {
-            console.error("profile_claimCoin update error:", profile_updateError);
+            console.error(
+              "profile_claimCoin update error:",
+              profile_updateError,
+            );
             profile_setMessage("Failed to claim daily coin.");
             return;
           }
@@ -729,8 +762,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-

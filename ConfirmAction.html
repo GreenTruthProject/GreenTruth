@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Action | Green Truth</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" />
+    <style>
+        /* ... Keeping your original CSS exactly as it was ... */
+        :root {
+            --bg-1: #dcedd6;
+            --bg-2: #e6f3d3;
+            --panel: #f2f4ef;
+            --panel-soft: #edf0ea;
+            --line: #dde4d5;
+            --text: #252f42;
+            --muted: #7b8294;
+            --accent: #6dbd5f;
+            --accent-2: #b6e89a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(115deg, var(--bg-1), var(--bg-2));
+            color: var(--text);
+        }
+
+        .shell {
+            max-width: 1320px;
+            margin: 20px auto;
+            min-height: calc(100vh - 40px);
+            background: #f6f7f4;
+            border: 1px solid #d8e1d0;
+            border-radius: 14px;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            background: #f0f1ef;
+            border-right: 1px solid #dde4d5;
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            padding: 8px 10px;
+            margin-bottom: 16px;
+        }
+
+        .brand-badge {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: linear-gradient(140deg, var(--accent), var(--accent-2));
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 0.9rem;
+        }
+
+        .nav {
+            display: grid;
+            gap: 8px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 12px;
+            border-radius: 10px;
+            color: #596074;
+            font-size: 0.92rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .nav a.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .nav a:hover:not(.active) {
+            background: #e9ece6;
+        }
+
+        .main {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            min-width: 0;
+        }
+
+        .topbar {
+            height: 64px;
+            border-bottom: 1px solid var(--line);
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .topbar h1 {
+            margin: 0;
+            font-size: 1.7rem;
+        }
+
+        .search {
+            max-width: 380px;
+            justify-self: center;
+            width: 100%;
+            height: 38px;
+            background: var(--panel);
+            border: 1px solid #e2e6df;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .search input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .language {
+            font-size: 0.84rem;
+            color: #6a7184;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: linear-gradient(145deg, #f3b76d, #9f643a);
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        #userLabel {
+            max-width: 180px;
+            font-size: 0.85rem;
+            color: #596074;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .workspace {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            grid-auto-rows: minmax(140px, auto);
+            gap: 14px;
+            align-content: start;
+        }
+
+        .panel {
+            background: var(--panel-soft);
+            border: 1px solid #e0e5dc;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .panel h3 {
+            margin: 0 0 8px;
+            font-size: 1.02rem;
+        }
+
+        .panel p {
+            margin: 0;
+            color: #000;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+
+        .hero-panel {
+            grid-column: 1 / -1;
+            background: linear-gradient(120deg, #e7fbdc, #f3fff0);
+        }
+
+        .actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            text-decoration: none;
+            padding: 9px 12px;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn-ghost {
+            background: #6dbd5f;
+            color: #fff;
+            text-decoration: none;
+            padding: 9px 12px;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .checklist li {
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #f6f8f4;
+            border: 1px solid #e5e9e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            font-size: 0.78rem;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #e4e8ff;
+            color: #4c53bb;
+            border: 1px solid #d5dbff;
+        }
+
+        .note {
+            width: 100%;
+            min-height: 130px;
+            margin-top: 8px;
+            border-radius: 10px;
+            border: 1px solid #dde3d9;
+            background: #f9faf8;
+            padding: 10px;
+            font-family: inherit;
+        }
+
+        @media (max-width: 1040px) {
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Confirm Action Camera ── */
+        .camera-section {
+            grid-column: 1 / -1;
+        }
+
+        .camera-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: #000;
+        }
+
+        #cameraPreview {
+            display: block;
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        #captureCanvas {
+            display: none;
+        }
+
+        .camera-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 14px;
+            justify-content: center;
+        }
+
+        #confirmActionBtn {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 120ms ease;
+        }
+
+        #confirmActionBtn:active {
+            transform: scale(0.96);
+        }
+
+        #confirmActionBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #confirmMessage {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.92rem;
+            min-height: 1.4em;
+        }
+
+        #confirmMessage.success {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        #confirmMessage.error {
+            color: #b12f2f;
+        }
+
+        #modelStatus {
+            text-align: center;
+            font-size: 0.84rem;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        #verificationSteps {
+            margin-top: 10px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-align: left;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-badge">&#10059;</span>
+                <span>Green Truth</span>
+            </div>
+
+            <nav class="nav">
+                <a href="dashboard.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+                <a href="profile.html"><span class="material-symbols-outlined">person</span>Profile</a>
+                <a href="DigitalAssets.html"><span class="material-symbols-outlined">storage</span>Digital
+                    Assets</a>
+                <a href="GoGreenMap.html"><span class="material-symbols-outlined">map</span>Go Green Map</a>
+                <a href="GreenCalculator.html"><span class="material-symbols-outlined">calculate</span>Green
+                    Calculator</a>
+                <a href="GreenCombat.html"><span class="material-symbols-outlined">sports_esports</span>Green
+                    Combat</a>
+                <a class="active" href="ConfirmAction.html"><span
+                        class="material-symbols-outlined">check_box</span>Confirm
+                    Action</a>
+                <a id="signOutBtn"><span class="material-symbols-outlined">logout</span>Sign Out</a>
+            </nav>
+        </aside>
+
+        <section class="main">
+            <header class="topbar">
+                <h1>Confirm Action</h1>
+                <div class="user-area">
+                    <span id="userLabel">Loading...</span>
+                </div>
+            </header>
+
+            <section class="workspace">
+                <div class="panel camera-section">
+                    <h3>🗑️ Trash Collection Verification</h3>
+                    <p>Point your camera at yourself picking up trash, then click <strong>Confirm Action</strong> to
+                        verify and earn coins.</p>
+                    <div id="modelStatus">Loading detection model...</div>
+                    <div class="camera-wrapper">
+                        <video id="cameraPreview" autoplay playsinline muted></video>
+                    </div>
+                    <canvas id="captureCanvas"></canvas>
+                    <div class="camera-controls">
+                        <button id="confirmActionBtn" type="button" disabled>Confirm Action</button>
+                    </div>
+                    <div id="confirmMessage"></div>
+                    <div id="verificationSteps"></div>
+                </div>
+            </section>
+        </section>
+    </div>
+
+    <script>
+        // ── CONFIGURATION ──
+        const SUPABASE_URL = "https://pnyjxbrkiifrsrtmnxro.supabase.co";
+        const SUPABASE_ANON_KEY =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueWp4YnJraWlmcnNydG1ueHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MDgxOTAsImV4cCI6MjA4ODE4NDE5MH0.uCYdN3SaANJZc5XqT1AdcbjlrFHCY7xaS2ff_y4z84c";
+        const GEMINI_API_KEY = "AIzaSyB71AxVYNEESK8QW5XBUNFshYR4SxHAMqM";
+        const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+        const TRASH_CLASSES = ["bottle", "cup", "can", "plastic bag", "paper", "cardboard", "trash bag", "food wrapper", "paper"];
+        const MIN_TF_CONFIDENCE = 0.6;
+        const MIN_GEMINI_CONFIDENCE = 0.7;
+        const MAX_GPS_DISTANCE_METERS = 200;
+        const MAX_TIMESTAMP_AGE_MS = 10 * 60 * 1000; // 10 minutes
+
+        // ── SUPABASE CLIENT ──
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ── DOM ELEMENTS ──
+        const userLabel = document.getElementById("userLabel");
+        const signOutBtn = document.getElementById("signOutBtn");
+        const cameraPreview = document.getElementById("cameraPreview");
+        const captureCanvas = document.getElementById("captureCanvas");
+        const confirmActionBtn = document.getElementById("confirmActionBtn");
+        const confirmMessage = document.getElementById("confirmMessage");
+        const modelStatus = document.getElementById("modelStatus");
+        const verificationSteps = document.getElementById("verificationSteps");
+
+        let cocoModel = null;
+        let cameraStream = null;
+        let userGPS = null;
+
+        // ── AUTH ──
+        _supabase.auth.onAuthStateChange((event, session) => {
+            if (session) {
+                userLabel.textContent = session.user.email;
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        signOutBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const { error } = await _supabase.auth.signOut();
+            if (!error) window.location.href = "login.html";
+            else console.error("Logout failed:", error.message);
+        });
+
+        // ── CAMERA ──
+        async function startCamera() {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraPreview.srcObject = cameraStream;
+            } catch (err) {
+                console.error("[startCamera] Failed:", err);
+                showMessage("Camera access denied or unavailable.", "error");
+            }
+        }
+
+        // ── MODEL LOADING ──
+        async function loadModel() {
+            try {
+                modelStatus.textContent = "Loading detection model...";
+                cocoModel = await cocoSsd.load();
+                modelStatus.textContent = "✅ Model ready";
+                confirmActionBtn.disabled = false;
+            } catch (err) {
+                console.error("[loadModel] Failed:", err);
+                modelStatus.textContent = "❌ Model failed to load";
+                showMessage("Could not load the detection model. Please refresh.", "error");
+            }
+        }
+
+        // ── USER GPS ──
+        function getUserGPS() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve(null);
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                    () => resolve(null),
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                );
+            });
+        }
+
+        // ── GPS DISTANCE (Haversine) ──
+        function haversineDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371000;
+            const toRad = (deg) => deg * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLng = toRad(lng2 - lng1);
+            const a = Math.sin(dLat / 2) ** 2 +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        // ── EXIF GPS EXTRACTION ──
+        function extractEXIF(imageBlob) {
+            return new Promise((resolve) => {
+                try {
+                    EXIF.getData(imageBlob, function () {
+                        const lat = EXIF.getTag(this, "GPSLatitude");
+                        const latRef = EXIF.getTag(this, "GPSLatitudeRef");
+                        const lng = EXIF.getTag(this, "GPSLongitude");
+                        const lngRef = EXIF.getTag(this, "GPSLongitudeRef");
+                        const dateTime = EXIF.getTag(this, "DateTimeOriginal");
+
+                        let gpsLat = null;
+                        let gpsLng = null;
+
+                        if (lat && lng) {
+                            gpsLat = lat[0] + lat[1] / 60 + lat[2] / 3600;
+                            gpsLng = lng[0] + lng[1] / 60 + lng[2] / 3600;
+                            if (latRef === "S") gpsLat = -gpsLat;
+                            if (lngRef === "W") gpsLng = -gpsLng;
+                        }
+
+                        resolve({ lat: gpsLat, lng: gpsLng, dateTime: dateTime || null });
+                    });
+                } catch (err) {
+                    console.error("[extractEXIF] Error:", err);
+                    resolve({ lat: null, lng: null, dateTime: null });
+                }
+            });
+        }
+
+        // ── TF.js DETECTION ──
+        function validateTFDetections(predictions) {
+            for (const pred of predictions) {
+                if (TRASH_CLASSES.includes(pred.class) && pred.score > MIN_TF_CONFIDENCE) {
+                    return { detected: true, object: pred.class, score: pred.score };
+                }
+            }
+            return { detected: false };
+        }
+
+        // ── GEMINI FALLBACK ──
+        async function verifyWithGemini(base64Image) {
+            const prompt = `You are an environmental verification AI.
+
+Your job is to determine whether the image contains **visible trash or litter that should be collected from the environment**.
+
+Carefully analyze the image and check:
+
+1. Are there visible trash objects such as bottles, cans, plastic bags, wrappers, paper, cardboard, or other litter?
+2. Does the image look like a screenshot, stock photo, edited image, meme, or unrelated content?
+
+Reject the image if:
+
+* no trash or litter is visible
+* the objects are not waste (e.g., normal household items in normal use)
+* the image appears staged, edited, or unrelated
+* the image is a meme, screenshot, or stock image
+
+Respond ONLY with valid JSON:
+
+{
+"cleanup_detected": true or false,
+"confidence": 0.0-1.0,
+"trash_objects": [],
+"reason": "short explanation"
+}`;
+
+            const body = {
+                contents: [{
+                    parts: [
+                        { text: prompt },
+                        {
+                            inline_data: {
+                                mime_type: "image/jpeg",
+                                data: base64Image
+                            }
+                        }
+                    ]
+                }]
+            };
+
+            const response = await fetch(GEMINI_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`Gemini API error ${response.status}: ${errText}`);
+            }
+
+            const result = await response.json();
+            const text = result?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+            // Parse JSON from response (may be wrapped in markdown code block)
+            const jsonMatch = text.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) throw new Error("Gemini returned non-JSON response");
+
+            return JSON.parse(jsonMatch[0]);
+        }
+
+        // ── COIN REWARD ──
+        async function awardCoins() {
+            const { data: { user }, error: userError } = await _supabase.auth.getUser();
+            if (userError || !user) {
+                showMessage("You must be logged in to earn coins.", "error");
+                return false;
+            }
+
+            const { data: profile, error: fetchError } = await _supabase
+                .from("profiles")
+                .select("coin")
+                .eq("id", user.id)
+                .single();
+
+            if (fetchError) {
+                console.error("[awardCoins] Fetch failed:", fetchError);
+                showMessage("Failed to read your profile.", "error");
+                return false;
+            }
+
+            const newCoin = (profile.coin || 0) + 5;
+            const { error: updateError } = await _supabase
+                .from("profiles")
+                .update({ coin: newCoin })
+                .eq("id", user.id);
+
+            if (updateError) {
+                console.error("[awardCoins] Update failed:", updateError);
+                showMessage("Failed to award coins.", "error");
+                return false;
+            }
+
+            return true;
+        }
+
+        // ── UI HELPERS ──
+        function showMessage(text, type) {
+            confirmMessage.textContent = text;
+            confirmMessage.className = type || "";
+        }
+
+        function logStep(text) {
+            verificationSteps.innerHTML += text + "<br>";
+        }
+
+        // ── MAIN CONFIRM ACTION HANDLER ──
+        confirmActionBtn.addEventListener("click", async () => {
+            if (!cocoModel) {
+                showMessage("Model is not loaded yet. Please wait.", "error");
+                return;
+            }
+            if (!cameraStream || !cameraPreview.videoWidth) {
+                showMessage("Camera is not available.", "error");
+                return;
+            }
+
+            confirmActionBtn.disabled = true;
+            const originalText = confirmActionBtn.textContent;
+            confirmActionBtn.textContent = "Analyzing...";
+            showMessage("", "");
+            verificationSteps.innerHTML = "";
+
+            try {
+                // Step 1: Capture frame
+                logStep("📷 Capturing image...");
+                captureCanvas.width = cameraPreview.videoWidth;
+                captureCanvas.height = cameraPreview.videoHeight;
+                const ctx = captureCanvas.getContext("2d");
+                ctx.drawImage(cameraPreview, 0, 0);
+
+                // Step 2: TF.js primary detection
+                logStep("🔍 Running TensorFlow.js detection...");
+                const predictions = await cocoModel.detect(captureCanvas);
+                console.log("[confirmAction] TF detections:", predictions);
+
+                const tfResult = validateTFDetections(predictions);
+                if (tfResult.detected) {
+                    logStep(`✅ TF.js detected: ${tfResult.object} (${(tfResult.score * 100).toFixed(1)}%)`);
+                    const awarded = await awardCoins();
+                    if (awarded) {
+                        showMessage("🎉 +5 coins awarded! Trash detected by AI.", "success");
+                    }
+                    return;
+                }
+
+                logStep("⚠️ TF.js did not detect trash. Falling back to Gemini...");
+
+                // Step 3: Get user GPS
+                logStep("📍 Acquiring your GPS location...");
+                userGPS = await getUserGPS();
+                if (!userGPS) {
+                    logStep("❌ GPS unavailable — skipping location check");
+                }
+
+                // Step 4: Extract EXIF from captured image
+                logStep("🔎 Checking image metadata...");
+                const imageBlob = await new Promise((resolve) =>
+                    captureCanvas.toBlob(resolve, "image/jpeg", 0.9)
+                );
+                const exifData = await extractEXIF(imageBlob);
+
+                // Step 5: GPS validation
+                if (userGPS && exifData.lat !== null && exifData.lng !== null) {
+                    const dist = haversineDistance(userGPS.lat, userGPS.lng, exifData.lat, exifData.lng);
+                    logStep(`📐 GPS distance: ${dist.toFixed(0)}m`);
+                    if (dist > MAX_GPS_DISTANCE_METERS) {
+                        showMessage(`Rejected: Image GPS is ${dist.toFixed(0)}m away from your location (max ${MAX_GPS_DISTANCE_METERS}m).`, "error");
+                        return;
+                    }
+                    logStep("✅ GPS location verified");
+                } else {
+                    logStep("ℹ️ No EXIF GPS found (live camera capture — OK)");
+                }
+
+                // Step 6: Timestamp validation
+                if (exifData.dateTime) {
+                    const photoTime = new Date(exifData.dateTime.replace(/:(\d{2}):(\d{2})/, "-$1-$2"));
+                    const age = Date.now() - photoTime.getTime();
+                    if (age > MAX_TIMESTAMP_AGE_MS) {
+                        showMessage("Rejected: Image timestamp is older than 10 minutes.", "error");
+                        return;
+                    }
+                    logStep("✅ Timestamp verified");
+                } else {
+                    logStep("ℹ️ No EXIF timestamp (live capture — OK)");
+                }
+
+                // Step 7: Send to Gemini
+                logStep("🤖 Sending image to Gemini AI for verification...");
+                confirmActionBtn.textContent = "AI Verifying...";
+
+                const base64 = captureCanvas.toDataURL("image/jpeg", 0.85).split(",")[1];
+                const geminiResult = await verifyWithGemini(base64);
+                console.log("[confirmAction] Gemini result:", geminiResult);
+
+                logStep(`🤖 Gemini: ${geminiResult.reason} (confidence: ${(geminiResult.confidence * 100).toFixed(0)}%)`);
+
+                if (geminiResult.cleanup_detected && geminiResult.confidence >= MIN_GEMINI_CONFIDENCE) {
+                    logStep("✅ Gemini approved cleanup action");
+                    const awarded = await awardCoins();
+                    if (awarded) {
+                        showMessage("🎉 +5 coins awarded! Verified by Gemini AI.", "success");
+                    }
+                } else {
+                    showMessage(`Rejected: ${geminiResult.reason || "No valid cleanup detected."}`, "error");
+                }
+
+            } catch (err) {
+                console.error("[confirmAction] Error:", err);
+                showMessage("Verification failed: " + (err.message || "Unknown error"), "error");
+            } finally {
+                confirmActionBtn.disabled = false;
+                confirmActionBtn.textContent = originalText;
+            }
+        });
+
+        // ── INIT ──
+        startCamera();
+        loadModel();
+    </script>
+</body>
+
+</html>
