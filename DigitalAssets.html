@@ -1,586 +1,1178 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Assets | Green Truth</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      :root {
+        --bg-1: #dcedd6;
+        --bg-2: #e6f3d3;
+        --panel: #f2f4ef;
+        --panel-soft: #edf0ea;
+        --line: #dde4d5;
+        --text: #252f42;
+        --muted: #7b8294;
+        --accent: #6dbd5f;
+        --accent-2: #b6e89a;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digital Assets | Green Truth</title>
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --bg-1: #dcedd6;
-      --bg-2: #e6f3d3;
-      --panel: #f2f4ef;
-      --panel-soft: #edf0ea;
-      --line: #dde4d5;
-      --text: #252f42;
-      --muted: #7b8294;
-      --accent: #6dbd5f;
-      --accent-2: #b6e89a;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-      background: linear-gradient(115deg, var(--bg-1), var(--bg-2));
-      color: var(--text);
-    }
-
-    .shell {
-      max-width: 1320px;
-      margin: 20px auto;
-      min-height: calc(100vh - 40px);
-      background: #f6f7f4;
-      border: 1px solid #d8e1d0;
-      border-radius: 14px;
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      overflow: hidden;
-    }
-
-    .sidebar {
-      background: #f0f1ef;
-      border-right: 1px solid #dde4d5;
-      padding: 18px 14px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: 1.2rem;
-      padding: 8px 10px;
-      margin-bottom: 16px;
-    }
-
-    .brand-badge {
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
-      background: linear-gradient(140deg, var(--accent), var(--accent-2));
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 0.9rem;
-    }
-
-    .nav {
-      display: grid;
-      gap: 8px;
-    }
-
-    .nav a {
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 12px;
-      border-radius: 10px;
-      color: #596074;
-      font-size: 0.92rem;
-      font-weight: 500;
-    }
-
-    .nav a.active {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .main {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      min-width: 0;
-    }
-
-    .topbar {
-      height: 64px;
-      border-bottom: 1px solid var(--line);
-      padding: 0 20px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .topbar h1 {
-      margin: 0;
-      font-size: 1.7rem;
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    #userLabel {
-      max-width: 180px;
-      font-size: 0.85rem;
-      color: #596074;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .workspace {
-      padding: 16px;
-      display: grid;
-      grid-template-columns: 1fr;
-      grid-auto-rows: minmax(80px, auto);
-      gap: 14px;
-      align-content: start;
-    }
-
-    .panel {
-      background: var(--panel-soft);
-      border: 1px solid #e0e5dc;
-      border-radius: 12px;
-      padding: 16px;
-    }
-
-    .panel h3 {
-      margin: 0;
-      font-size: 1.02rem;
-    }
-
-    .assets-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .assets-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 12px;
-    }
-
-    .empty-state {
-      color: var(--muted);
-      text-align: center;
-      padding: 20px;
-      border: 1px dashed var(--line);
-      border-radius: 10px;
-      background: #f7faf5;
-    }
-
-    .asset-card {
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: #fff;
-      overflow: hidden;
-      transition:
-        transform 180ms ease,
-        box-shadow 180ms ease;
-    }
-
-    .asset-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.11);
-    }
-
-    .asset-preview {
-      height: 130px;
-      background: #eef3ea;
-      border-bottom: 1px solid var(--line);
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-    }
-
-    .asset-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .asset-preview .placeholder {
-      color: #5b6475;
-      font-weight: 700;
-    }
-
-    .asset-content {
-      padding: 10px;
-    }
-
-    .asset-title {
-      margin: 0 0 6px;
-      font-size: 0.95rem;
-    }
-
-    .asset-description {
-      margin: 0;
-      color: #555;
-      font-size: 0.86rem;
-      line-height: 1.4;
-      min-height: 2.8em;
-      display: -webkit-box;
-      line-clamp: 2;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .asset-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    button {
-      border: none;
-      border-radius: 8px;
-      padding: 8px 10px;
-      cursor: pointer;
-      transition: transform 120ms ease;
-    }
-
-    button:active {
-      transform: scale(0.97);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .btn-neutral {
-      background: #e9efe5;
-      color: #3b4659;
-    }
-
-    .btn-danger {
-      background: #ffe9e9;
-      color: #b12f2f;
-    }
-
-    .modal {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 220ms ease;
-      z-index: 50;
-    }
-
-    .modal.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-    }
-
-    .modal-card {
-      position: relative;
-      width: min(92vw, 560px);
-      max-height: 88vh;
-      overflow: auto;
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 14px;
-      opacity: 0;
-      transform: scale(0.9);
-      pointer-events: none;
-      transition:
-        opacity 220ms ease,
-        transform 220ms ease;
-    }
-
-    .modal.active .modal-card {
-      opacity: 1;
-      transform: scale(1);
-      pointer-events: auto;
-    }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .modal-head h4 {
-      margin: 0;
-    }
-
-    .upload-form {
-      display: grid;
-      gap: 10px;
-    }
-
-    .upload-form label {
-      font-size: 0.86rem;
-      font-weight: 600;
-    }
-
-    .upload-form input,
-    .upload-form textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 8px;
-      font: inherit;
-    }
-
-    .upload-form textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .status {
-      min-height: 20px;
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-
-    .preview-modal .modal-card {
-      width: min(92vw, 900px);
-    }
-
-    .preview-body img,
-    .preview-body video,
-    .preview-body iframe {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-    }
-
-    .preview-body iframe {
-      min-height: 65vh;
-    }
-
-    @media (max-width: 860px) {
-      .shell {
+      * {
+        box-sizing: border-box;
+      }
+      body {
         margin: 0;
-        border-radius: 0;
+        font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         min-height: 100vh;
-        grid-template-columns: 1fr;
+        background-color: #ffffff;
+        color: var(--text);
+      }
+      .shell {
+        min-height: 100vh;
+        background: #f6f7f4;
+        border: 1px solid #d8e1d0;
+        border-radius: 14px;
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        overflow: hidden;
       }
 
       .sidebar {
-        border-right: none;
-        border-bottom: 1px solid var(--line);
+        background: #f0f1ef;
+        border-right: 1px solid #dde4d5;
+        padding: 18px 14px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
         gap: 10px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        padding: 8px 10px;
+        margin-bottom: 16px;
+      }
+
+      .brand-badge {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        background: linear-gradient(140deg, var(--accent), var(--accent-2));
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 0.9rem;
+      }
+
+      .nav {
+        display: grid;
+        gap: 8px;
+      }
+
+      .nav a {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 12px;
+        border-radius: 10px;
+        color: #596074;
+        font-size: 0.92rem;
+        font-weight: 500;
+      }
+
+      .nav a.active {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .main {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-width: 0;
       }
 
       .topbar {
-        height: auto;
-        padding: 12px;
+        height: 64px;
+        border-bottom: 1px solid var(--line);
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        align-items: center;
+      }
+      .topbar h1 {
+        margin: 0;
+        font-size: 1.7rem;
+      }
+
+      .user-area {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      #darkToggle {
+        border: 1px solid #d1d7cc;
+        background: #ffffff;
+        color: #3b4659;
+        border-radius: 999px;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+      }
+
+      #userLabel {
+        max-width: 180px;
+        font-size: 0.85rem;
+        color: #596074;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .workspace {
+        padding: 16px;
+        display: grid;
         grid-template-columns: 1fr;
+        grid-auto-rows: minmax(80px, auto);
+        gap: 14px;
+        align-content: start;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <div class="shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <span class="brand-badge">&#10059;</span>
-        <span>Green Truth</span>
-      </div>
+      .panel {
+        background: var(--panel-soft);
+        border: 1px solid #e0e5dc;
+        border-radius: 12px;
+        padding: 16px;
+      }
 
-      <nav class="nav">
-        <a href="dashboard.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
-        <a href="profile.html"><span class="material-symbols-outlined">person</span>Profile</a>
-        <a class="active" href="DigitalAssets.html"><span class="material-symbols-outlined">storage</span>Digital
-          Assets</a>
-        <a href="GoGreenMap.html"><span class="material-symbols-outlined">map</span>Go Green Map</a>
-        <a href="GreenCalculator.html"><span class="material-symbols-outlined">calculate</span>Green
-          Calculator</a>
-        <a href="GreenCombat.html"><span class="material-symbols-outlined">sports_esports</span>Green
-          Combat</a>
-        <a href="ConfirmAction.html"><span class="material-symbols-outlined">check_box</span>Confirm
-          Action</a>
-        <a id="signOutBtn" href="#"><span class="material-symbols-outlined">logout</span>Sign Out</a>
-      </nav>
-    </aside>
+      .panel h3 {
+        margin: 0;
+        font-size: 1.02rem;
+      }
 
-    <section class="main">
-      <header class="topbar">
-        <h1>Digital Assets</h1>
-        <div class="user-area">
-          <span id="userLabel">Guest User</span>
+      .assets-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .assets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+
+      .empty-state {
+        color: var(--muted);
+        text-align: center;
+        padding: 20px;
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+        background: #f7faf5;
+      }
+
+      .asset-card {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+        transition:
+          transform 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .asset-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.11);
+      }
+
+      .asset-preview {
+        height: 130px;
+        background: #eef3ea;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+
+      .asset-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .asset-preview .placeholder {
+        color: #5b6475;
+        font-weight: 700;
+      }
+
+      .asset-content {
+        padding: 10px;
+      }
+
+      .asset-title {
+        margin: 0 0 6px;
+        font-size: 0.95rem;
+      }
+
+      .asset-description {
+        margin: 0;
+        color: #555;
+        font-size: 0.86rem;
+        line-height: 1.4;
+        min-height: 2.8em;
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      button {
+        border: none;
+        border-radius: 8px;
+        padding: 8px 10px;
+        cursor: pointer;
+        transition: transform 120ms ease;
+      }
+      body,
+      .sidebar,
+      .panel,
+      .asset-card,
+      .modal-card,
+      button,
+      input,
+      textarea {
+        transition:
+          background 0.25s ease,
+          background-color 0.25s ease,
+          color 0.25s ease,
+          border-color 0.25s ease;
+      }
+
+      button:active {
+        transform: scale(0.97);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .btn-neutral {
+        background: #e9efe5;
+        color: #3b4659;
+      }
+
+      .btn-danger {
+        background: #ffe9e9;
+        color: #b12f2f;
+      }
+
+      .modal {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 220ms ease;
+        z-index: 50;
+      }
+
+      .modal.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .modal-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-card {
+        position: relative;
+        width: min(92vw, 560px);
+        max-height: 88vh;
+        overflow: auto;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px;
+        opacity: 0;
+        transform: scale(0.9);
+        pointer-events: none;
+        transition:
+          opacity 220ms ease,
+          transform 220ms ease;
+      }
+
+      .modal.active .modal-card {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+      }
+
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .modal-head h4 {
+        margin: 0;
+      }
+
+      .upload-form {
+        display: grid;
+        gap: 10px;
+      }
+
+      .upload-form label {
+        font-size: 0.86rem;
+        font-weight: 600;
+      }
+
+      .upload-form input,
+      .upload-form textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px;
+        font: inherit;
+      }
+
+      .upload-form textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+
+      .status {
+        min-height: 20px;
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      .preview-modal .modal-card {
+        width: min(92vw, 900px);
+      }
+
+      .preview-body img,
+      .preview-body video,
+      .preview-body iframe {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+
+      .preview-body iframe {
+        min-height: 65vh;
+      }
+      body.dark {
+        background-color: #1e1e1e;
+        color: #eaeaea;
+      }
+
+      body.dark .shell {
+        background: #1e1e1e;
+        border-color: #3a3a3a;
+      }
+
+      body.dark .sidebar {
+        background-color: #252526;
+        border-right-color: #3a3a3a;
+      }
+
+      body.dark .main-content {
+        background-color: #1e1e1e;
+      }
+
+      body.dark .topbar {
+        border-bottom-color: #3a3a3a;
+      }
+
+      body.dark .topbar h1,
+      body.dark #userLabel,
+      body.dark .brand,
+      body.dark .panel h3,
+      body.dark .asset-title,
+      body.dark .asset-description,
+      body.dark .empty-state {
+        color: #eaeaea;
+      }
+
+      body.dark .nav a {
+        color: #cfcfcf;
+      }
+
+      body.dark .nav a.active {
+        color: #fff;
+      }
+
+      body.dark .nav a:hover:not(.active) {
+        background: #121212;
+      }
+
+      body.dark .panel,
+      body.dark .card,
+      body.dark .asset-card,
+      body.dark .modal-card {
+        background-color: #2d2d2d;
+        border: 1px solid #3a3a3a;
+      }
+
+      body.dark .asset-preview {
+        background: #252526;
+        border-bottom-color: #3a3a3a;
+      }
+
+      body.dark .empty-state {
+        background: #252526;
+        border-color: #3a3a3a;
+      }
+
+      body.dark button {
+        background-color: #3a7d44;
+        color: white;
+      }
+
+      body.dark .btn-neutral {
+        background: #3a3a3a;
+        color: #eaeaea;
+      }
+
+      body.dark .btn-danger {
+        background: #6f2f2f;
+        color: #ffffff;
+      }
+
+      body.dark input,
+      body.dark textarea {
+        background-color: #2d2d2d;
+        color: white;
+        border: 1px solid #444;
+      }
+      body.dark #darkToggle {
+        background: #2d2d2d;
+        border-color: #444;
+        color: #eaeaea;
+      }
+
+      @media (max-width: 860px) {
+        .shell {
+          min-height: 100vh;
+          background: #f6f7f4;
+          border: 1px solid #d8e1d0;
+          border-radius: 14px;
+          display: grid;
+          grid-template-columns: 240px 1fr;
+          overflow: hidden;
+        }
+
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+          gap: 10px;
+        }
+
+        .topbar {
+          height: auto;
+          padding: 12px;
+          grid-template-columns: 1fr;
+        }
+      }
+          /* Responsive breakpoint normalization: small<=480, medium 481-768, large 769-1024, xl>=1025 */
+      img,
+      video,
+      canvas,
+      iframe {
+        max-width: 100%;
+      }
+
+      a,
+      button,
+      input,
+      select,
+      textarea {
+        min-height: 44px;
+      }
+
+      a:focus-visible,
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid #2e7d32;
+        outline-offset: 2px;
+      }
+
+      .main-content,
+      .workspace,
+      .panel,
+      .card,
+      .asset-card,
+      .map-card,
+      .modal-card {
+        min-width: 0;
+      }
+
+      @media (max-width: 480px) {
+        .shell {
+          min-height: 100dvh;
+          border-radius: 0;
+          border-left: 0;
+          border-right: 0;
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+          padding: 12px;
+          gap: 8px;
+        }
+
+        .nav {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+
+        .nav a {
+          padding: 10px 12px;
+          font-size: 0.9rem;
+        }
+
+        .topbar {
+          height: auto;
+          padding: 12px;
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .topbar h1 {
+          font-size: clamp(1.3rem, 5vw, 1.55rem);
+        }
+
+        .user-area {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 8px;
+          width: 100%;
+        }
+
+        #userLabel {
+          max-width: 100%;
+          white-space: normal;
+          overflow: visible;
+          text-overflow: unset;
+        }
+
+        .search {
+          width: 100%;
+          max-width: none;
+          justify-self: stretch;
+        }
+
+        .workspace {
+          padding: 12px;
+          gap: 12px;
+          grid-template-columns: 1fr !important;
+        }
+
+        .assets-grid {
+          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+
+        .camera-controls {
+          flex-direction: column;
+        }
+
+        .map-area {
+          padding: 12px;
+          min-height: 0;
+          height: calc(100dvh - 190px);
+        }
+
+        #map {
+          min-height: 320px;
+        }
+
+        .plant-sidebar {
+          width: 100vw;
+        }
+
+        .hero-panel .actions,
+        .actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .hero-panel .actions a,
+        .btn-primary,
+        .btn-ghost,
+        .btn-neutral,
+        .btn-danger,
+        #confirmActionBtn {
+          width: 100%;
+          text-align: center;
+          justify-content: center;
+        }
+      }
+
+      @media (min-width: 481px) and (max-width: 768px) {
+        .shell {
+          min-height: 100dvh;
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+          padding: 14px;
+        }
+
+        .nav {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .topbar {
+          height: auto;
+          padding: 14px;
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        .user-area {
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 10px;
+          width: 100%;
+        }
+
+        .search {
+          width: 100%;
+          max-width: none;
+          justify-self: stretch;
+        }
+
+        .workspace {
+          padding: 14px;
+          gap: 14px;
+          grid-template-columns: 1fr !important;
+        }
+
+        .assets-grid {
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .map-area {
+          padding: 14px;
+          min-height: 0;
+          height: calc(100dvh - 220px);
+        }
+
+        #map {
+          min-height: 380px;
+        }
+      }
+
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .shell {
+          grid-template-columns: 220px 1fr;
+        }
+
+        .sidebar {
+          padding: 16px 12px;
+        }
+
+        .topbar {
+          padding: 0 16px;
+        }
+
+        .workspace {
+          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .hero-panel,
+        .camera-section,
+        .suggestion-card,
+        .actions {
+          grid-column: 1 / -1;
+        }
+
+        .map-area {
+          padding: 16px;
+          height: calc(100dvh - 120px);
+        }
+      }
+
+      @media (min-width: 1025px) {
+        .shell {
+          grid-template-columns: 240px 1fr;
+        }
+      }
+    
+      /* Mobile sidebar drawer toggle */
+      .user-area {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .mobile-menu-toggle {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border: 1px solid #d1d7cc;
+        background: #ffffff;
+        color: #3b4659;
+        border-radius: 10px;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .mobile-menu-toggle .material-symbols-outlined {
+        font-size: 1.3rem;
+      }
+
+      .mobile-menu-toggle:focus-visible,
+      .nav a:focus-visible {
+        outline: 2px solid #2e7d32;
+        outline-offset: 2px;
+      }
+
+      .mobile-menu-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 20, 28, 0.4);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.22s ease, visibility 0.22s ease;
+        z-index: 1090;
+      }
+
+      body.menu-open {
+        overflow: hidden;
+      }
+
+      body.menu-open .mobile-menu-overlay {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      body.dark .mobile-menu-toggle {
+        background: #2d2d2d;
+        border-color: #444;
+        color: #eaeaea;
+      }
+
+      @media (max-width: 768px) {
+        .user-area {
+          display: grid;
+          grid-template-columns: auto auto;
+          grid-template-areas:
+            "menu menu"
+            "theme user";
+          justify-content: end;
+          justify-items: end;
+          align-items: center;
+          gap: 8px;
+        }
+
+        #mobileMenuToggle {
+          grid-area: menu;
+          justify-self: end;
+        }
+
+        #darkToggle {
+          grid-area: theme;
+        }
+
+        #userLabel {
+          grid-area: user;
+          text-align: right;
+        }
+
+        .mobile-menu-toggle {
+          display: inline-flex;
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          width: min(280px, 84vw);
+          max-width: 280px;
+          border-right: 1px solid var(--line);
+          border-bottom: none;
+          transform: translateX(-100%);
+          transition: transform 0.25s ease;
+          z-index: 1100;
+          overflow-y: auto;
+        }
+
+        body.menu-open .sidebar {
+          transform: translateX(0);
+        }
+      }
+
+      @media (min-width: 769px) {
+        .mobile-menu-toggle {
+          display: none !important;
+        }
+
+        .sidebar {
+          position: static;
+          transform: none !important;
+          width: auto;
+          max-width: none;
+          z-index: auto;
+        }
+
+        .mobile-menu-overlay {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="shell">
+      <aside class="sidebar" id="appSidebar">
+        <div class="brand">
+          <span class="brand-badge">&#10059;</span>
+          <span>Green Truth</span>
         </div>
-      </header>
 
-      <section id="digital-assets-workspace" class="workspace">
-        <article class="panel">
-          <div class="assets-toolbar">
-            <h3>Asset Library</h3>
-            <div style="display:flex;align-items:center;gap:12px">
-              <label style="display:inline-flex;align-items:center;gap:6px;font-size:0.88rem;cursor:pointer">
-                <input id="myAssetsSwitch" type="checkbox" /> My Assets
-              </label>
-              <button id="openUploadBtn" class="btn-primary" type="button">
-                Upload Asset
-              </button>
+        <nav class="nav">
+          <a href="dashboard.html"
+            ><span class="material-symbols-outlined">dashboard</span
+            >Dashboard</a
+          >
+          <a href="profile.html"
+            ><span class="material-symbols-outlined">person</span>Profile</a
+          >
+          <a class="active" href="DigitalAssets.html"
+            ><span class="material-symbols-outlined">storage</span>Digital
+            Assets</a
+          >
+          <a href="GoGreenMap.html"
+            ><span class="material-symbols-outlined">map</span>Go Green Map</a
+          >
+          <a href="GreenCalculator.html"
+            ><span class="material-symbols-outlined">calculate</span>Green
+            Calculator</a
+          >
+          <a href="GreenCombat.html"
+            ><span class="material-symbols-outlined">sports_esports</span>Green
+            Combat</a
+          >
+          <a href="ConfirmAction.html"
+            ><span class="material-symbols-outlined">check_box</span>Confirm
+            Action</a
+          >
+          <a id="signOutBtn" href="#"
+            ><span class="material-symbols-outlined">logout</span>Sign Out</a
+          >
+        </nav>
+      </aside>
+
+      <section class="main main-content">
+        <header class="topbar">
+          <h1>Digital Assets</h1>
+          <div class="user-area">
+                        <button
+              id="mobileMenuToggle"
+              class="mobile-menu-toggle"
+              type="button"
+              aria-label="Open navigation menu"
+              aria-controls="appSidebar"
+              aria-expanded="false"
+            >
+              <span class="material-symbols-outlined">menu</span>
+            </button>
+            <button id="darkToggle" type="button" aria-label="Toggle dark mode">
+              &#127769;
+            </button>
+            <span id="userLabel">Guest User</span>
+          </div>
+        </header>
+
+        <section id="digital-assets-workspace" class="workspace">
+          <article class="panel">
+            <div class="assets-toolbar">
+              <h3>Asset Library</h3>
+              <div style="display: flex; align-items: center; gap: 12px">
+                <label
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-size: 0.88rem;
+                    cursor: pointer;
+                  "
+                >
+                  <input id="myAssetsSwitch" type="checkbox" /> My Assets
+                </label>
+                <button id="openUploadBtn" class="btn-primary" type="button">
+                  Upload Asset
+                </button>
+              </div>
+            </div>
+            <div id="assetGrid" class="assets-grid"></div>
+            <div id="assetEmptyState" class="empty-state">No assets found.</div>
+          </article>
+
+          <div id="uploadModal" class="modal" aria-hidden="true">
+            <div id="uploadModalOverlay" class="modal-overlay"></div>
+            <div class="modal-card">
+              <div class="modal-head">
+                <h4>Upload Asset</h4>
+                <button id="closeUploadBtn" class="btn-neutral" type="button">
+                  Close
+                </button>
+              </div>
+              <form id="uploadForm" class="upload-form">
+                <div>
+                  <label for="titleInput">Title *</label>
+                  <input id="titleInput" type="text" required />
+                </div>
+                <div>
+                  <label for="descriptionInput">Description</label>
+                  <textarea id="descriptionInput"></textarea>
+                </div>
+                <div>
+                  <label for="fileInput">File *</label>
+                  <input
+                    id="fileInput"
+                    type="file"
+                    accept="image/*,video/*,application/pdf,.pdf"
+                    required
+                  />
+                </div>
+                <div>
+                  <label for="externalLinkInput">External Link</label>
+                  <input
+                    id="externalLinkInput"
+                    type="url"
+                    placeholder="https://example.com"
+                  />
+                </div>
+                <button id="uploadBtn" class="btn-primary" type="submit">
+                  Upload
+                </button>
+                <div id="uploadStatus" class="status"></div>
+              </form>
             </div>
           </div>
-          <div id="assetGrid" class="assets-grid"></div>
-          <div id="assetEmptyState" class="empty-state">No assets found.</div>
-        </article>
 
-        <div id="uploadModal" class="modal" aria-hidden="true">
-          <div id="uploadModalOverlay" class="modal-overlay"></div>
-          <div class="modal-card">
-            <div class="modal-head">
-              <h4>Upload Asset</h4>
-              <button id="closeUploadBtn" class="btn-neutral" type="button">
-                Close
-              </button>
+          <div id="previewModal" class="modal preview-modal" aria-hidden="true">
+            <div id="previewModalOverlay" class="modal-overlay"></div>
+            <div class="modal-card">
+              <div class="modal-head">
+                <h4 id="previewTitle">Preview</h4>
+                <button id="closePreviewBtn" class="btn-neutral" type="button">
+                  Close
+                </button>
+              </div>
+              <div id="previewBody" class="preview-body"></div>
             </div>
-            <form id="uploadForm" class="upload-form">
-              <div>
-                <label for="titleInput">Title *</label>
-                <input id="titleInput" type="text" required />
-              </div>
-              <div>
-                <label for="descriptionInput">Description</label>
-                <textarea id="descriptionInput"></textarea>
-              </div>
-              <div>
-                <label for="fileInput">File *</label>
-                <input id="fileInput" type="file" accept="image/*,video/*,application/pdf,.pdf" required />
-              </div>
-              <div>
-                <label for="externalLinkInput">External Link</label>
-                <input id="externalLinkInput" type="url" placeholder="https://example.com" />
-              </div>
-              <button id="uploadBtn" class="btn-primary" type="submit">
-                Upload
-              </button>
-              <div id="uploadStatus" class="status"></div>
-            </form>
           </div>
-        </div>
-
-        <div id="previewModal" class="modal preview-modal" aria-hidden="true">
-          <div id="previewModalOverlay" class="modal-overlay"></div>
-          <div class="modal-card">
-            <div class="modal-head">
-              <h4 id="previewTitle">Preview</h4>
-              <button id="closePreviewBtn" class="btn-neutral" type="button">
-                Close
-              </button>
-            </div>
-            <div id="previewBody" class="preview-body"></div>
-          </div>
-        </div>
+        </section>
       </section>
-    </section>
-  </div>
+    </div>
+    <div id="mobileMenuOverlay" class="mobile-menu-overlay" hidden></div>
 
-  <script>
-    const SUPABASE_URL = "https://pnyjxbrkiifrsrtmnxro.supabase.co";
-    const SUPABASE_ANON_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueWp4YnJraWlmcnNydG1ueHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MDgxOTAsImV4cCI6MjA4ODE4NDE5MH0.uCYdN3SaANJZc5XqT1AdcbjlrFHCY7xaS2ff_y4z84c";
+    <script>
+      const SUPABASE_URL = "https://pnyjxbrkiifrsrtmnxro.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueWp4YnJraWlmcnNydG1ueHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MDgxOTAsImV4cCI6MjA4ODE4NDE5MH0.uCYdN3SaANJZc5XqT1AdcbjlrFHCY7xaS2ff_y4z84c";
 
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const state = {
-      assetsById: new Map(),
-      orderedIds: [],
-      isUploading: false,
-      showOnlyMine: false,
-      currentUserId: null,
-    };
-    const ASSET_BUCKET_CANDIDATES = ["assets", "plant-images"];
+      const state = {
+        assetsById: new Map(),
+        orderedIds: [],
+        isUploading: false,
+        showOnlyMine: false,
+        currentUserId: null,
+      };
+      const ASSET_BUCKET_CANDIDATES = ["assets", "plant-images"];
 
-    const userLabel = document.getElementById("userLabel");
-    const signOutBtn = document.getElementById("signOutBtn");
-    const assetGrid = document.getElementById("assetGrid");
-    const assetEmptyState = document.getElementById("assetEmptyState");
+      const userLabel = document.getElementById("userLabel");
+      const signOutBtn = document.getElementById("signOutBtn");
+      const toggle = document.getElementById("darkToggle");
+      const assetGrid = document.getElementById("assetGrid");
+      const assetEmptyState = document.getElementById("assetEmptyState");
 
-    const openUploadBtn = document.getElementById("openUploadBtn");
-    const uploadModal = document.getElementById("uploadModal");
-    const uploadModalOverlay = document.getElementById("uploadModalOverlay");
-    const closeUploadBtn = document.getElementById("closeUploadBtn");
+      const openUploadBtn = document.getElementById("openUploadBtn");
+      const uploadModal = document.getElementById("uploadModal");
+      const uploadModalOverlay = document.getElementById("uploadModalOverlay");
+      const closeUploadBtn = document.getElementById("closeUploadBtn");
 
-    const uploadForm = document.getElementById("uploadForm");
-    const titleInput = document.getElementById("titleInput");
-    const descriptionInput = document.getElementById("descriptionInput");
-    const fileInput = document.getElementById("fileInput");
-    const externalLinkInput = document.getElementById("externalLinkInput");
-    const uploadBtn = document.getElementById("uploadBtn");
-    const uploadStatus = document.getElementById("uploadStatus");
+      const uploadForm = document.getElementById("uploadForm");
+      const titleInput = document.getElementById("titleInput");
+      const descriptionInput = document.getElementById("descriptionInput");
+      const fileInput = document.getElementById("fileInput");
+      const externalLinkInput = document.getElementById("externalLinkInput");
+      const uploadBtn = document.getElementById("uploadBtn");
+      const uploadStatus = document.getElementById("uploadStatus");
 
-    const previewModal = document.getElementById("previewModal");
-    const previewModalOverlay = document.getElementById(
-      "previewModalOverlay",
-    );
-    const closePreviewBtn = document.getElementById("closePreviewBtn");
-    const previewTitle = document.getElementById("previewTitle");
-    const previewBody = document.getElementById("previewBody");
+      const previewModal = document.getElementById("previewModal");
+      const previewModalOverlay = document.getElementById(
+        "previewModalOverlay",
+      );
+      const closePreviewBtn = document.getElementById("closePreviewBtn");
+      const previewTitle = document.getElementById("previewTitle");
+      const previewBody = document.getElementById("previewBody");
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    }
+      toggle.onclick = () => {
+        document.body.classList.toggle("dark");
 
-    function detectFileType(file) {
-      const type = (file?.type || "").toLowerCase();
-      const name = (file?.name || "").toLowerCase();
-      if (type.startsWith("image/")) return "image";
-      if (type.startsWith("video/")) return "video";
-      if (type === "application/pdf" || name.endsWith(".pdf")) return "pdf";
-      return null;
-    }
+        if (document.body.classList.contains("dark")) {
+          localStorage.setItem("theme", "dark");
+        } else {
+          localStorage.setItem("theme", "light");
+        }
+      };
+      function initMobileSidebarToggle() {
+        const sidebar = document.getElementById("appSidebar");
+        const menuToggleBtn = document.getElementById("mobileMenuToggle");
+        const menuOverlay = document.getElementById("mobileMenuOverlay");
 
-    function renderThumbnail(asset) {
-      if (asset.file_type === "image") {
-        return `<img src="${escapeHtml(asset.thumbnail_url || asset.file_url)}" alt="${escapeHtml(asset.title || "Asset")}" loading="lazy" />`;
+        if (!sidebar || !menuToggleBtn || !menuOverlay) return;
+
+        const setMenuState = (isOpen) => {
+          document.body.classList.toggle("menu-open", isOpen);
+          menuToggleBtn.setAttribute("aria-expanded", String(isOpen));
+          menuToggleBtn.setAttribute(
+            "aria-label",
+            isOpen ? "Close navigation menu" : "Open navigation menu",
+          );
+
+          const icon = menuToggleBtn.querySelector(".material-symbols-outlined");
+          if (icon) {
+            icon.textContent = isOpen ? "close" : "menu";
+          }
+
+          menuOverlay.hidden = !isOpen;
+        };
+
+        setMenuState(false);
+
+        menuToggleBtn.addEventListener("click", () => {
+          setMenuState(!document.body.classList.contains("menu-open"));
+        });
+
+        menuOverlay.addEventListener("click", () => {
+          setMenuState(false);
+        });
+
+        sidebar.querySelectorAll(".nav a").forEach((link) => {
+          link.addEventListener("click", () => {
+            setMenuState(false);
+          });
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (
+            event.key === "Escape" &&
+            document.body.classList.contains("menu-open")
+          ) {
+            setMenuState(false);
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          if (window.innerWidth > 768 && document.body.classList.contains("menu-open")) {
+            setMenuState(false);
+          }
+        });
       }
-      if (asset.file_type === "video")
-        return `<div class="placeholder">VIDEO</div>`;
-      if (asset.file_type === "pdf")
-        return `<div class="placeholder">PDF</div>`;
-      return `<div class="placeholder">FILE</div>`;
-    }
+      const theme = localStorage.getItem("theme");
 
-    function renderAssets() {
-      if (state.orderedIds.length === 0) {
-        assetGrid.innerHTML = "";
-        assetEmptyState.textContent = state.showOnlyMine
-          ? "You have no assets yet."
-          : "No assets found.";
-        assetEmptyState.style.display = "block";
-        return;
+      if (theme === "dark") {
+        document.body.classList.add("dark");
       }
 
-      assetEmptyState.style.display = "none";
+      initMobileSidebarToggle();
 
-      const html = state.orderedIds
-        .map((id) => {
-          const asset = state.assetsById.get(id);
-          if (!asset) return "";
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
 
-          const isOwner = String(asset.user_id) === String(state.currentUserId);
+      function detectFileType(file) {
+        const type = (file?.type || "").toLowerCase();
+        const name = (file?.name || "").toLowerCase();
+        if (type.startsWith("image/")) return "image";
+        if (type.startsWith("video/")) return "video";
+        if (type === "application/pdf" || name.endsWith(".pdf")) return "pdf";
+        return null;
+      }
 
-          return `
+      function renderThumbnail(asset) {
+        if (asset.file_type === "image") {
+          return `<img src="${escapeHtml(asset.thumbnail_url || asset.file_url)}" alt="${escapeHtml(asset.title || "Asset")}" loading="lazy" />`;
+        }
+        if (asset.file_type === "video")
+          return `<div class="placeholder">VIDEO</div>`;
+        if (asset.file_type === "pdf")
+          return `<div class="placeholder">PDF</div>`;
+        return `<div class="placeholder">FILE</div>`;
+      }
+
+      function renderAssets() {
+        if (state.orderedIds.length === 0) {
+          assetGrid.innerHTML = "";
+          assetEmptyState.textContent = state.showOnlyMine
+            ? "You have no assets yet."
+            : "No assets found.";
+          assetEmptyState.style.display = "block";
+          return;
+        }
+
+        assetEmptyState.style.display = "none";
+
+        const html = state.orderedIds
+          .map((id) => {
+            const asset = state.assetsById.get(id);
+            if (!asset) return "";
+
+            const isOwner =
+              String(asset.user_id) === String(state.currentUserId);
+
+            return `
                     <article class="asset-card" data-id="${escapeHtml(asset.id)}">
                       <div class="asset-preview">${renderThumbnail(asset)}</div>
                       <div class="asset-content">
@@ -594,310 +1186,312 @@
                       </div>
                     </article>
                   `;
-        })
-        .join("");
+          })
+          .join("");
 
-      assetGrid.innerHTML = html;
-    }
-
-    async function fetchAssets() {
-      let query = _supabase
-        .from("digital_assets")
-        .select(
-          "id,user_id,title,description,file_url,thumbnail_url,file_type,external_link,created_at",
-        )
-        .order("created_at", { ascending: false });
-
-      if (state.showOnlyMine && state.currentUserId) {
-        query = query.eq("user_id", state.currentUserId);
+        assetGrid.innerHTML = html;
       }
 
-      const { data, error } = await query;
+      async function fetchAssets() {
+        let query = _supabase
+          .from("digital_assets")
+          .select(
+            "id,user_id,title,description,file_url,thumbnail_url,file_type,external_link,created_at",
+          )
+          .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error("[fetchAssets] Failed:", error);
-        return;
-      }
+        if (state.showOnlyMine && state.currentUserId) {
+          query = query.eq("user_id", state.currentUserId);
+        }
 
-      state.assetsById.clear();
-      state.orderedIds = [];
-      for (const asset of data || []) {
-        state.assetsById.set(asset.id, asset);
-        state.orderedIds.push(asset.id);
-      }
+        const { data, error } = await query;
 
-      renderAssets();
-    }
-
-    function openUploadModal() {
-      uploadStatus.textContent = "";
-      uploadModal.classList.add("active");
-      uploadModal.setAttribute("aria-hidden", "false");
-    }
-
-    function closeUploadModal() {
-      uploadModal.classList.remove("active");
-      uploadModal.setAttribute("aria-hidden", "true");
-    }
-
-    function openPreviewModal(asset) {
-      if (!asset) return;
-
-      previewTitle.textContent = asset.title || "Preview";
-
-      if (asset.file_type === "image") {
-        previewBody.innerHTML = `<img src="${escapeHtml(asset.file_url)}" alt="${escapeHtml(asset.title || "image")}" />`;
-      } else if (asset.file_type === "video") {
-        previewBody.innerHTML = `<video src="${escapeHtml(asset.file_url)}" controls></video>`;
-      } else if (asset.file_type === "pdf") {
-        previewBody.innerHTML = `<iframe src="${escapeHtml(asset.file_url)}" title="${escapeHtml(asset.title || "pdf")}"></iframe>`;
-      } else {
-        previewBody.innerHTML = `<p>Preview unavailable.</p>`;
-      }
-
-      previewModal.classList.add("active");
-      previewModal.setAttribute("aria-hidden", "false");
-    }
-
-    function closePreviewModal() {
-      previewModal.classList.remove("active");
-      previewModal.setAttribute("aria-hidden", "true");
-      previewBody.innerHTML = "";
-    }
-
-    function storagePathFromUrl(url) {
-      try {
-        const parsed = new URL(url);
-        const marker = "/storage/v1/object/public/";
-        const markerIndex = parsed.pathname.indexOf(marker);
-        if (markerIndex === -1) return null;
-
-        const tail = parsed.pathname.slice(markerIndex + marker.length);
-        const slashIndex = tail.indexOf("/");
-        if (slashIndex === -1) return null;
-
-        const bucket = tail.slice(0, slashIndex);
-        const path = decodeURIComponent(tail.slice(slashIndex + 1));
-        if (!bucket || !path) return null;
-        return { bucket, path };
-      } catch (error) {
-        console.error("[storagePathFromUrl] Invalid url:", error);
-        return null;
-      }
-    }
-
-    async function uploadAsset(event) {
-      event.preventDefault();
-      if (state.isUploading) return;
-
-      const title = titleInput.value.trim();
-      const description = descriptionInput.value.trim();
-      const link = externalLinkInput.value.trim();
-      const file = fileInput.files?.[0] || null;
-
-      if (!title || !file) {
-        uploadStatus.textContent = "Title and file are required.";
-        return;
-      }
-
-      const fileType = detectFileType(file);
-      if (!fileType) {
-        uploadStatus.textContent =
-          "Only image, video, and PDF are supported.";
-        return;
-      }
-
-      state.isUploading = true;
-      uploadBtn.disabled = true;
-      uploadBtn.textContent = "Uploading...";
-      uploadStatus.textContent = "Uploading file...";
-
-      try {
-        const {
-          data: { user },
-        } = await _supabase.auth.getUser();
-        console.log("Uploading as user:", user?.id);
-        if (!user?.id) {
-          uploadStatus.textContent = "User not authenticated";
+        if (error) {
+          console.error("[fetchAssets] Failed:", error);
           return;
         }
 
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const fileName = `${Date.now()}-${safeName}`;
+        state.assetsById.clear();
+        state.orderedIds = [];
+        for (const asset of data || []) {
+          state.assetsById.set(asset.id, asset);
+          state.orderedIds.push(asset.id);
+        }
 
-        let uploadBucket = null;
-        let lastUploadError = null;
+        renderAssets();
+      }
 
-        for (const bucket of ASSET_BUCKET_CANDIDATES) {
-          const { error: uploadError } = await _supabase.storage
-            .from(bucket)
-            .upload(fileName, file, {
-              cacheControl: "3600",
-              contentType: file.type || undefined,
-              upsert: false,
+      function openUploadModal() {
+        uploadStatus.textContent = "";
+        uploadModal.classList.add("active");
+        uploadModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeUploadModal() {
+        uploadModal.classList.remove("active");
+        uploadModal.setAttribute("aria-hidden", "true");
+      }
+
+      function openPreviewModal(asset) {
+        if (!asset) return;
+
+        previewTitle.textContent = asset.title || "Preview";
+
+        if (asset.file_type === "image") {
+          previewBody.innerHTML = `<img src="${escapeHtml(asset.file_url)}" alt="${escapeHtml(asset.title || "image")}" />`;
+        } else if (asset.file_type === "video") {
+          previewBody.innerHTML = `<video src="${escapeHtml(asset.file_url)}" controls></video>`;
+        } else if (asset.file_type === "pdf") {
+          previewBody.innerHTML = `<iframe src="${escapeHtml(asset.file_url)}" title="${escapeHtml(asset.title || "pdf")}"></iframe>`;
+        } else {
+          previewBody.innerHTML = `<p>Preview unavailable.</p>`;
+        }
+
+        previewModal.classList.add("active");
+        previewModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closePreviewModal() {
+        previewModal.classList.remove("active");
+        previewModal.setAttribute("aria-hidden", "true");
+        previewBody.innerHTML = "";
+      }
+
+      function storagePathFromUrl(url) {
+        try {
+          const parsed = new URL(url);
+          const marker = "/storage/v1/object/public/";
+          const markerIndex = parsed.pathname.indexOf(marker);
+          if (markerIndex === -1) return null;
+
+          const tail = parsed.pathname.slice(markerIndex + marker.length);
+          const slashIndex = tail.indexOf("/");
+          if (slashIndex === -1) return null;
+
+          const bucket = tail.slice(0, slashIndex);
+          const path = decodeURIComponent(tail.slice(slashIndex + 1));
+          if (!bucket || !path) return null;
+          return { bucket, path };
+        } catch (error) {
+          console.error("[storagePathFromUrl] Invalid url:", error);
+          return null;
+        }
+      }
+
+      async function uploadAsset(event) {
+        event.preventDefault();
+        if (state.isUploading) return;
+
+        const title = titleInput.value.trim();
+        const description = descriptionInput.value.trim();
+        const link = externalLinkInput.value.trim();
+        const file = fileInput.files?.[0] || null;
+
+        if (!title || !file) {
+          uploadStatus.textContent = "Title and file are required.";
+          return;
+        }
+
+        const fileType = detectFileType(file);
+        if (!fileType) {
+          uploadStatus.textContent =
+            "Only image, video, and PDF are supported.";
+          return;
+        }
+
+        state.isUploading = true;
+        uploadBtn.disabled = true;
+        uploadBtn.textContent = "Uploading...";
+        uploadStatus.textContent = "Uploading file...";
+
+        try {
+          const {
+            data: { user },
+          } = await _supabase.auth.getUser();
+          console.log("Uploading as user:", user?.id);
+          if (!user?.id) {
+            uploadStatus.textContent = "User not authenticated";
+            return;
+          }
+
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const fileName = `${Date.now()}-${safeName}`;
+
+          let uploadBucket = null;
+          let lastUploadError = null;
+
+          for (const bucket of ASSET_BUCKET_CANDIDATES) {
+            const { error: uploadError } = await _supabase.storage
+              .from(bucket)
+              .upload(fileName, file, {
+                cacheControl: "3600",
+                contentType: file.type || undefined,
+                upsert: false,
+              });
+
+            if (!uploadError) {
+              uploadBucket = bucket;
+              break;
+            }
+
+            lastUploadError = uploadError;
+            if (
+              !String(uploadError.message || "")
+                .toLowerCase()
+                .includes("bucket not found")
+            ) {
+              break;
+            }
+          }
+
+          if (!uploadBucket) {
+            console.error("[uploadAsset] Upload failed:", lastUploadError);
+            uploadStatus.textContent = `Upload failed: ${lastUploadError?.message || "Unknown error"}`;
+            return;
+          }
+
+          const { data: publicData } = _supabase.storage
+            .from(uploadBucket)
+            .getPublicUrl(fileName);
+          const fileUrl = publicData?.publicUrl || null;
+          if (!fileUrl) {
+            uploadStatus.textContent = "Could not read uploaded file URL.";
+            return;
+          }
+
+          const { error: insertError } = await _supabase
+            .from("digital_assets")
+            .insert({
+              title,
+              description: description || null,
+              file_url: fileUrl,
+              thumbnail_url: fileType === "image" ? fileUrl : null,
+              file_type: fileType,
+              external_link: link || null,
+              user_id: user.id,
             });
 
-          if (!uploadError) {
-            uploadBucket = bucket;
-            break;
+          if (insertError) {
+            console.error("[uploadAsset] Insert failed:", insertError);
+            uploadStatus.textContent = `Failed to save metadata: ${insertError.message || "Unknown error"}`;
+            return;
           }
 
-          lastUploadError = uploadError;
-          if (
-            !String(uploadError.message || "")
-              .toLowerCase()
-              .includes("bucket not found")
-          ) {
-            break;
-          }
+          uploadStatus.textContent = "Upload completed.";
+          uploadForm.reset();
+          closeUploadModal();
+          await fetchAssets();
+        } catch (error) {
+          console.error("[uploadAsset] Unexpected error:", error);
+          uploadStatus.textContent = "Unexpected error.";
+        } finally {
+          state.isUploading = false;
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = "Upload";
         }
-
-        if (!uploadBucket) {
-          console.error("[uploadAsset] Upload failed:", lastUploadError);
-          uploadStatus.textContent = `Upload failed: ${lastUploadError?.message || "Unknown error"}`;
-          return;
-        }
-
-        const { data: publicData } = _supabase.storage
-          .from(uploadBucket)
-          .getPublicUrl(fileName);
-        const fileUrl = publicData?.publicUrl || null;
-        if (!fileUrl) {
-          uploadStatus.textContent = "Could not read uploaded file URL.";
-          return;
-        }
-
-        const { error: insertError } = await _supabase
-          .from("digital_assets")
-          .insert({
-            title,
-            description: description || null,
-            file_url: fileUrl,
-            thumbnail_url: fileType === "image" ? fileUrl : null,
-            file_type: fileType,
-            external_link: link || null,
-            user_id: user.id,
-          });
-
-        if (insertError) {
-          console.error("[uploadAsset] Insert failed:", insertError);
-          uploadStatus.textContent = `Failed to save metadata: ${insertError.message || "Unknown error"}`;
-          return;
-        }
-
-        uploadStatus.textContent = "Upload completed.";
-        uploadForm.reset();
-        closeUploadModal();
-        await fetchAssets();
-      } catch (error) {
-        console.error("[uploadAsset] Unexpected error:", error);
-        uploadStatus.textContent = "Unexpected error.";
-      } finally {
-        state.isUploading = false;
-        uploadBtn.disabled = false;
-        uploadBtn.textContent = "Upload";
-      }
-    }
-
-    async function deleteAsset(assetId) {
-      const asset = state.assetsById.get(assetId);
-      if (!asset) return;
-
-      if (String(asset.user_id) !== String(state.currentUserId)) return;
-
-      if (!confirm("Are you sure you want to delete this asset?")) return;
-
-      try {
-        const storageTarget = storagePathFromUrl(asset.file_url);
-        if (storageTarget) {
-          const { bucket, path } = storageTarget;
-          const { error: removeError } = await _supabase.storage
-            .from(bucket)
-            .remove([path]);
-          if (removeError) {
-            console.error(
-              "[deleteAsset] Storage remove failed:",
-              removeError,
-            );
-          }
-        }
-
-        const { error: deleteError } = await _supabase
-          .from("digital_assets")
-          .delete()
-          .eq("id", assetId);
-        if (deleteError) {
-          console.error("[deleteAsset] DB delete failed:", deleteError);
-          return;
-        }
-
-        await fetchAssets();
-      } catch (error) {
-        console.error("[deleteAsset] Unexpected error:", error);
-      }
-    }
-
-    _supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        state.currentUserId = session.user.id;
-        userLabel.textContent = session.user.email;
-        fetchAssets();
-      } else {
-        state.currentUserId = null;
-        window.location.href = "login.html";
-      }
-    });
-
-    document.getElementById("myAssetsSwitch").addEventListener("change", async (event) => {
-      state.showOnlyMine = Boolean(event.target.checked);
-      await fetchAssets();
-    });
-
-    signOutBtn.addEventListener("click", async (event) => {
-      event.preventDefault();
-      const { error } = await _supabase.auth.signOut();
-      if (!error) {
-        window.location.href = "login.html";
-      } else {
-        console.error("Logout failed:", error.message);
-      }
-    });
-
-    openUploadBtn.addEventListener("click", openUploadModal);
-    closeUploadBtn.addEventListener("click", closeUploadModal);
-    uploadModalOverlay.addEventListener("click", closeUploadModal);
-
-    closePreviewBtn.addEventListener("click", closePreviewModal);
-    previewModalOverlay.addEventListener("click", closePreviewModal);
-
-    uploadForm.addEventListener("submit", uploadAsset);
-
-    assetGrid.addEventListener("click", (event) => {
-      const button = event.target.closest("button[data-action]");
-      if (!button) return;
-
-      const card = button.closest(".asset-card");
-      const assetId = card?.dataset.id;
-      if (!assetId) return;
-
-      if (button.dataset.action === "view") {
-        openPreviewModal(state.assetsById.get(assetId));
-        return;
       }
 
-      if (button.dataset.action === "link") {
+      async function deleteAsset(assetId) {
         const asset = state.assetsById.get(assetId);
-        if (asset?.external_link) {
-          window.open(asset.external_link, "_blank", "noopener");
+        if (!asset) return;
+
+        if (String(asset.user_id) !== String(state.currentUserId)) return;
+
+        if (!confirm("Are you sure you want to delete this asset?")) return;
+
+        try {
+          const storageTarget = storagePathFromUrl(asset.file_url);
+          if (storageTarget) {
+            const { bucket, path } = storageTarget;
+            const { error: removeError } = await _supabase.storage
+              .from(bucket)
+              .remove([path]);
+            if (removeError) {
+              console.error(
+                "[deleteAsset] Storage remove failed:",
+                removeError,
+              );
+            }
+          }
+
+          const { error: deleteError } = await _supabase
+            .from("digital_assets")
+            .delete()
+            .eq("id", assetId);
+          if (deleteError) {
+            console.error("[deleteAsset] DB delete failed:", deleteError);
+            return;
+          }
+
+          await fetchAssets();
+        } catch (error) {
+          console.error("[deleteAsset] Unexpected error:", error);
         }
-        return;
       }
 
-      if (button.dataset.action === "delete") {
-        deleteAsset(assetId);
-      }
-    });
-  </script>
-</body>
+      _supabase.auth.onAuthStateChange((event, session) => {
+        if (session) {
+          state.currentUserId = session.user.id;
+          userLabel.textContent = session.user.email;
+          fetchAssets();
+        } else {
+          state.currentUserId = null;
+          window.location.href = "login.html";
+        }
+      });
 
+      document
+        .getElementById("myAssetsSwitch")
+        .addEventListener("change", async (event) => {
+          state.showOnlyMine = Boolean(event.target.checked);
+          await fetchAssets();
+        });
+
+      signOutBtn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const { error } = await _supabase.auth.signOut();
+        if (!error) {
+          window.location.href = "login.html";
+        } else {
+          console.error("Logout failed:", error.message);
+        }
+      });
+
+      openUploadBtn.addEventListener("click", openUploadModal);
+      closeUploadBtn.addEventListener("click", closeUploadModal);
+      uploadModalOverlay.addEventListener("click", closeUploadModal);
+
+      closePreviewBtn.addEventListener("click", closePreviewModal);
+      previewModalOverlay.addEventListener("click", closePreviewModal);
+
+      uploadForm.addEventListener("submit", uploadAsset);
+
+      assetGrid.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-action]");
+        if (!button) return;
+
+        const card = button.closest(".asset-card");
+        const assetId = card?.dataset.id;
+        if (!assetId) return;
+
+        if (button.dataset.action === "view") {
+          openPreviewModal(state.assetsById.get(assetId));
+          return;
+        }
+
+        if (button.dataset.action === "link") {
+          const asset = state.assetsById.get(assetId);
+          if (asset?.external_link) {
+            window.open(asset.external_link, "_blank", "noopener");
+          }
+          return;
+        }
+
+        if (button.dataset.action === "delete") {
+          deleteAsset(assetId);
+        }
+      });
+    </script>
+  </body>
 </html>
+

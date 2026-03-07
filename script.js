@@ -97,7 +97,7 @@ function initTypingEffect() {
 
   const originalText = badge.textContent;
   badge.textContent = "";
-  badge.style.minWidth = "280px";
+  badge.style.minWidth = "min(280px, 85vw)";
 
   let charIndex = 0;
   const typingSpeed = 40; // Faster typing (was 80ms)
@@ -119,6 +119,7 @@ function initTypingEffect() {
  */
 function initNavbar() {
   const navbar = document.getElementById("navbar");
+  if (!navbar) return;
 
   window.addEventListener("scroll", () => {
     if (window.scrollY > 50) {
@@ -138,31 +139,50 @@ function initMobileMenu() {
   const hamburgerIcon = hamburger?.querySelector(".material-symbols-outlined");
 
   if (hamburger && navLinks) {
-    hamburger.addEventListener("click", () => {
-      navLinks.classList.toggle("active");
-      hamburger.classList.toggle("active");
-
-      // Toggle icon between menu and close
+    const setMenuState = (isOpen) => {
+      navLinks.classList.toggle("active", isOpen);
+      hamburger.classList.toggle("active", isOpen);
+      hamburger.setAttribute("aria-expanded", String(isOpen));
       if (hamburgerIcon) {
-        hamburgerIcon.textContent = navLinks.classList.contains("active")
-          ? "close"
-          : "menu";
+        hamburgerIcon.textContent = isOpen ? "close" : "menu";
       }
+    };
+
+    hamburger.setAttribute("aria-expanded", "false");
+
+    hamburger.addEventListener("click", () => {
+      const isOpen = !navLinks.classList.contains("active");
+      setMenuState(isOpen);
     });
 
     // Close menu on link click
     navLinks.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => {
-        navLinks.classList.remove("active");
-        hamburger.classList.remove("active");
-        if (hamburgerIcon) {
-          hamburgerIcon.textContent = "menu";
-        }
+        setMenuState(false);
       });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && navLinks.classList.contains("active")) {
+        setMenuState(false);
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!navLinks.classList.contains("active")) return;
+      if (navLinks.contains(event.target) || hamburger.contains(event.target)) {
+        return;
+      }
+      setMenuState(false);
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 1024 && navLinks.classList.contains("active")) {
+        setMenuState(false);
+      }
     });
   }
 }
-
 /**
  * Animated stats counter
  */
@@ -217,9 +237,9 @@ function toggleSolution(button) {
   // Update button text
   const span = button.querySelector("span");
   if (details.classList.contains("show")) {
-    span.textContent = "Ẩn giải pháp";
+    span.textContent = "áº¨n giáº£i phÃ¡p";
   } else {
-    span.textContent = "Xem giải pháp";
+    span.textContent = "Xem giáº£i phÃ¡p";
   }
 }
 
@@ -340,3 +360,5 @@ function initScrollReveal() {
 window.addEventListener("load", () => {
   initScrollReveal();
 });
+
+
