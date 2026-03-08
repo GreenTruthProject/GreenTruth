@@ -69,7 +69,15 @@
         margin-bottom: 16px;
       }
 
-      .brand-badge {
+      .brand-logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+.brand-badge {
         width: 26px;
         height: 26px;
         border-radius: 8px;
@@ -460,7 +468,7 @@
         cursor: not-allowed;
       }
 
-      /* â”€â”€ My Plants Sidebar Cards â”€â”€ */
+      /* Ã¢â€â‚¬Ã¢â€â‚¬ My Plants Sidebar Cards Ã¢â€â‚¬Ã¢â€â‚¬ */
       .plant-sidebar-header {
         padding: 14px 16px;
         border-bottom: 1px solid var(--line);
@@ -535,7 +543,105 @@
       .open-detail-btn:hover {
         background: #d0d0d0;
       }
-          /* Responsive breakpoint normalization: small<=480, medium 481-768, large 769-1024, xl>=1025 */
+
+      body.dark .plant-sidebar {
+        background: #252526;
+        border-left-color: #3a3a3a;
+        box-shadow: -8px 0 30px rgba(0, 0, 0, 0.45);
+      }
+
+      body.dark .plant-sidebar-head,
+      body.dark .plant-sidebar-header,
+      body.dark .plant-info,
+      body.dark .add-update {
+        border-color: #3a3a3a;
+      }
+
+      body.dark .plant-sidebar-head h2,
+      body.dark .plant-sidebar-header h2,
+      body.dark .plant-card-title,
+      body.dark .plant-card-desc {
+        color: #eaeaea;
+      }
+
+      body.dark .plant-sidebar-close {
+        background: #2d2d2d;
+        border-color: #444;
+        color: #eaeaea;
+      }
+
+      body.dark .plant-sidebar-content {
+        background: #252526;
+      }
+
+      body.dark .my-plant-card,
+      body.dark .log-card {
+        background: #2d2d2d;
+        border: 1px solid #3a3a3a;
+        box-shadow: none;
+      }
+
+      body.dark .plant-card-meta,
+      body.dark .log-time,
+      body.dark .plant-info .label,
+      body.dark .empty-state {
+        color: #b7bdcc;
+      }
+
+      body.dark .open-detail-btn {
+        background: #3a3a3a;
+        color: #eaeaea;
+      }
+
+      body.dark .open-detail-btn:hover {
+        background: #4a4a4a;
+      }
+
+      body.dark .add-update {
+        background: #222;
+      }
+
+      body.dark .add-update textarea {
+        background: #2d2d2d;
+        color: #eaeaea;
+        border-color: #444;
+      }
+      /* Force dark mode on both map sidebars in case later rules override */
+      body.dark #plantSidebar,
+      body.dark #myPlantsSidebar,
+      html.dark #plantSidebar,
+      html.dark #myPlantsSidebar {
+        background: #252526 !important;
+        border-left-color: #3a3a3a !important;
+      }
+
+      body.dark #plantSidebar .plant-sidebar-head,
+      body.dark #myPlantsSidebar .plant-sidebar-header,
+      body.dark #plantSidebar .plant-info,
+      body.dark #plantSidebar .add-update,
+      body.dark #myPlantsSidebar .plant-sidebar-content {
+        background: #252526 !important;
+        border-color: #3a3a3a !important;
+      }
+
+      body.dark #myPlantsSidebar .my-plant-card,
+      body.dark #plantSidebar .log-card {
+        background: #2d2d2d !important;
+        border-color: #3a3a3a !important;
+      }
+
+      body.dark #myPlantsSidebar .plant-card-title,
+      body.dark #myPlantsSidebar .plant-card-desc,
+      body.dark #myPlantsSidebar .plant-card-meta,
+      body.dark #plantSidebar .plant-sidebar-head h2,
+      body.dark #plantSidebar .plant-info,
+      body.dark #plantSidebar .log-note,
+      body.dark #plantSidebar .log-time,
+      body.dark #myPlantsSidebar .empty-state,
+      body.dark #plantSidebar .empty-state {
+        color: #eaeaea !important;
+      }
+      /* Responsive breakpoint normalization: small<=480, medium 481-768, large 769-1024, xl>=1025 */
       img,
       video,
       canvas,
@@ -769,7 +875,7 @@
           grid-template-columns: 240px 1fr;
         }
       }
-    
+
       /* Mobile sidebar drawer toggle */
       .user-area {
         display: flex;
@@ -810,7 +916,9 @@
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transition: opacity 0.22s ease, visibility 0.22s ease;
+        transition:
+          opacity 0.22s ease,
+          visibility 0.22s ease;
         z-index: 1090;
       }
 
@@ -905,48 +1013,47 @@
     <div class="shell">
       <aside class="sidebar" id="appSidebar">
         <div class="brand">
-          <span class="brand-badge">&#10059;</span>
+          <img class="brand-logo" src="resources/logo_type_shit.png" alt="Green Truth logo" />
           <span>Green Truth</span>
         </div>
-
         <nav class="nav">
           <a href="dashboard.html"
-            ><span class="material-symbols-outlined">dashboard</span
-            >Dashboard</a
+            ><span class="material-symbols-outlined">dashboard</span>Bảng Điều
+            Khiển</a
           >
           <a href="profile.html"
-            ><span class="material-symbols-outlined">person</span>Profile</a
+            ><span class="material-symbols-outlined">person</span>Hồ Sơ</a
           >
           <a href="DigitalAssets.html"
-            ><span class="material-symbols-outlined">image</span>Digital
-            Assets</a
+            ><span class="material-symbols-outlined">storage</span>Tài Sản Số</a
           >
           <a class="active" href="GoGreenMap.html"
-            ><span class="material-symbols-outlined">map</span>Go Green Map</a
+            ><span class="material-symbols-outlined">map</span>Bản Đồ Go
+            Green</a
           >
           <a href="GreenCalculator.html"
-            ><span class="material-symbols-outlined">calculate</span>Green
-            Calculator</a
+            ><span class="material-symbols-outlined">calculate</span>Máy Tính
+            Xanh</a
           >
           <a href="GreenCombat.html"
-            ><span class="material-symbols-outlined">sports_esports</span>Green
-            Combat</a
+            ><span class="material-symbols-outlined">sports_esports</span>So Tài
+            Xanh</a
           >
           <a href="ConfirmAction.html"
-            ><span class="material-symbols-outlined">check_box</span>Confirm
-            Action</a
+            ><span class="material-symbols-outlined">check_box</span>Xác Nhận
+            Hành Động</a
           >
           <a id="signOutBtn" href="#"
-            ><span class="material-symbols-outlined">logout</span>Sign Out</a
+            ><span class="material-symbols-outlined">logout</span>Đăng Xuất</a
           >
         </nav>
       </aside>
 
       <section class="main main-content">
         <header class="topbar">
-          <h1>Go Green Map</h1>
+          <h1>Bản Đồ Go Green</h1>
           <div class="user-area">
-                        <button
+            <button
               id="mobileMenuToggle"
               class="mobile-menu-toggle"
               type="button"
@@ -973,13 +1080,16 @@
     <div id="mobileMenuOverlay" class="mobile-menu-overlay" hidden></div>
     <aside id="plantSidebar" class="plant-sidebar" aria-hidden="true">
       <div class="plant-sidebar-head">
-        <h2>Plant Details</h2>
+        <h2>
+          <span class="material-symbols-outlined">nature</span>Chi Tiết Cây
+          Trồng
+        </h2>
         <button
           id="closePlantSidebarBtn"
           class="plant-sidebar-close"
           type="button"
         >
-          Close
+          Đóng
         </button>
       </div>
       <div id="plantInfo" class="plant-info">
@@ -994,24 +1104,27 @@
           placeholder="Write an update note..."
         ></textarea>
         <input id="logFilesInput" type="file" accept="image/*" multiple />
-        <button id="addUpdateBtn" type="button">Add Update</button>
+        <button id="addUpdateBtn" type="button">Thêm Cập Nhật</button>
       </div>
     </aside>
 
     <!-- My Plants Sidebar -->
     <aside id="myPlantsSidebar" class="plant-sidebar" aria-hidden="true">
       <div class="plant-sidebar-header">
-        <h2>ðŸŒ± My Plants</h2>
+        <h2>
+          <span class="material-symbols-outlined">nature</span>Chi Tiết Cây
+          Trồng
+        </h2>
         <button
           id="closeMyPlantsSidebar"
           class="plant-sidebar-close"
           type="button"
         >
-          âœ•
+          Đóng
         </button>
       </div>
       <div id="myPlantsContent" class="plant-sidebar-content">
-        <div class="empty-state">Loading your plants...</div>
+        <div class="empty-state">Tải danh sách cây trồng của bạn...</div>
       </div>
     </aside>
     <script>
@@ -1048,7 +1161,9 @@
             isOpen ? "Close navigation menu" : "Open navigation menu",
           );
 
-          const icon = menuToggleBtn.querySelector(".material-symbols-outlined");
+          const icon = menuToggleBtn.querySelector(
+            ".material-symbols-outlined",
+          );
           if (icon) {
             icon.textContent = isOpen ? "close" : "menu";
           }
@@ -1082,7 +1197,10 @@
         });
 
         window.addEventListener("resize", () => {
-          if (window.innerWidth > 768 && document.body.classList.contains("menu-open")) {
+          if (
+            window.innerWidth > 768 &&
+            document.body.classList.contains("menu-open")
+          ) {
             setMenuState(false);
           }
         });
@@ -1252,11 +1370,11 @@
         <div style="max-width:220px">
           <b>${escapeHtml(p.plant_name || "Plant")}</b><br/>
           <p>${escapeHtml(p.description || "")}</p>
-          <div><b>Owner:</b> ${escapeHtml(ownerText)}</div>
+          <div><b>Chủ sở hữu:</b> ${escapeHtml(ownerText)}</div>
           ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" style="width:100%;border-radius:6px"/>` : ""}
-          <button class="popup-btn" onclick="addPlantUpdate('${p.id}')">Add Update</button>
-          <button class="popup-btn" onclick="viewInfo('${p.id}')">Info</button>
-          ${canDelete ? `<button class="popup-btn delete" onclick="deletePlant('${p.id}')">Delete</button>` : ""}
+          <button class="popup-btn" onclick="addPlantUpdate('${p.id}')">Cập Nhật</button>
+          <button class="popup-btn" onclick="viewInfo('${p.id}')">Thông Tin</button>
+          ${canDelete ? `<button class="popup-btn delete" onclick="deletePlant('${p.id}')">Xóa</button>` : ""}
         </div>
       `;
 
@@ -1499,7 +1617,7 @@
         controls.className = "map-toolbar";
         controls.innerHTML = `
               <button id="plantHereBtn" type="button">
-                Plant Here
+                Trồng Cây Ở Đây
               </button>
             `;
         topbar.appendChild(controls);
@@ -1554,7 +1672,7 @@
           const myPlantsBtn = document.createElement("button");
           myPlantsBtn.id = "myPlantsButton";
           myPlantsBtn.type = "button";
-          myPlantsBtn.textContent = "My Plants";
+          myPlantsBtn.textContent = "Cây Trồng Của Tôi";
           controls.appendChild(myPlantsBtn);
           myPlantsBtn.addEventListener("click", handleMyPlantsClick);
         }
@@ -1570,9 +1688,9 @@
         const ownerText =
           plant.owner?.email || plant.owner_email || plant.owner_id || "N/A";
         plantInfo.innerHTML = `
-              <div><span class="label">Name:</span>${escapeHtml(plant.plant_name || "Plant")}</div>
-              <div><span class="label">Owner:</span>${escapeHtml(ownerText)}</div>
-              <div><span class="label">Planted:</span>${escapeHtml(formatDate(plant.created_at || plant.planted_date))}</div>
+              <div><span class="label">Tên Cây Trồng:</span>${escapeHtml(plant.plant_name || "Plant")}</div>
+              <div><span class="label">Chủ:</span>${escapeHtml(ownerText)}</div>
+              <div><span class="label">Ngày Trồng:</span>${escapeHtml(formatDate(plant.created_at || plant.planted_date))}</div>
             `;
         plantSidebar.classList.add("open");
         plantSidebar.setAttribute("aria-hidden", "false");
@@ -1870,7 +1988,7 @@
         return date.toLocaleDateString();
       }
 
-      // â”€â”€ My Plants Sidebar â”€â”€
+      // Ã¢â€â‚¬Ã¢â€â‚¬ My Plants Sidebar Ã¢â€â‚¬Ã¢â€â‚¬
       const myPlantsSidebar = document.getElementById("myPlantsSidebar");
       const myPlantsContent = document.getElementById("myPlantsContent");
       const closeMyPlantsSidebarBtn = document.getElementById(
@@ -1928,7 +2046,7 @@
 
       function renderMyPlants(plants) {
         if (!plants || plants.length === 0) {
-          myPlantsContent.innerHTML = `<div class="empty-state">You haven't planted anything yet. ðŸŒ¿</div>`;
+          myPlantsContent.innerHTML = `<div class="empty-state">You haven't planted anything yet. Ã°Å¸Å’Â¿</div>`;
           return;
         }
 
@@ -1943,19 +2061,19 @@
 
             return `
               <div class="my-plant-card">
-                <div class="plant-card-title">ðŸŒ± ${escapeHtml(plant.plant_name || "Unnamed Plant")}</div>
-                <div class="plant-card-meta">ðŸ“ ${escapeHtml(locationText)}</div>
-                <div class="plant-card-meta">ðŸ—“ ${escapeHtml(formatPlantedDate(plant.planted_date || plant.created_at))}</div>
-                <div class="plant-card-desc">${escapeHtml(plant.description || "No description")}</div>
+                <div class="plant-card-title">Tên Cây: ${escapeHtml(plant.plant_name || "Unnamed Plant")}</div>
+                <div class="plant-card-meta">Vị Trí: ${escapeHtml(locationText)}</div>
+                <div class="plant-card-meta">Ngày Trồng: ${escapeHtml(formatPlantedDate(plant.planted_date || plant.created_at))}</div>
+                <div class="plant-card-desc">${escapeHtml(plant.description || "Không có mô tả")}</div>
                 <div class="plant-card-actions">
                   <button class="view-map-btn" type="button"
                     data-lat="${escapeHtml(String(plant.latitude ?? ""))}"
                     data-lng="${escapeHtml(String(plant.longitude ?? ""))}">
-                    View on Map
+                    Xem trên Bản đồ
                   </button>
                   <button class="open-detail-btn" type="button"
                     data-plant-id="${escapeHtml(plant.id)}">
-                    Open Details
+                    Xem Chi Tiết
                   </button>
                 </div>
               </div>
@@ -2002,4 +2120,3 @@
     </script>
   </body>
 </html>
-

@@ -60,7 +60,15 @@
         margin-bottom: 16px;
       }
 
-      .brand-badge {
+      .brand-logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+.brand-badge {
         width: 26px;
         height: 26px;
         border-radius: 8px;
@@ -496,7 +504,7 @@
           grid-template-columns: 1fr;
         }
       }
-          /* Responsive breakpoint normalization: small<=480, medium 481-768, large 769-1024, xl>=1025 */
+      /* Responsive breakpoint normalization: small<=480, medium 481-768, large 769-1024, xl>=1025 */
       img,
       video,
       canvas,
@@ -730,7 +738,7 @@
           grid-template-columns: 240px 1fr;
         }
       }
-    
+
       /* Mobile sidebar drawer toggle */
       .user-area {
         display: flex;
@@ -771,7 +779,9 @@
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transition: opacity 0.22s ease, visibility 0.22s ease;
+        transition:
+          opacity 0.22s ease,
+          visibility 0.22s ease;
         z-index: 1090;
       }
 
@@ -866,48 +876,48 @@
     <div class="shell">
       <aside class="sidebar" id="appSidebar">
         <div class="brand">
-          <span class="brand-badge">&#10059;</span>
+          <img class="brand-logo" src="resources/logo_type_shit.png" alt="Green Truth logo" />
           <span>Green Truth</span>
         </div>
 
         <nav class="nav">
           <a href="dashboard.html"
-            ><span class="material-symbols-outlined">dashboard</span
-            >Dashboard</a
+            ><span class="material-symbols-outlined">dashboard</span>Bảng Điều
+            Khiển</a
           >
           <a href="profile.html"
-            ><span class="material-symbols-outlined">person</span>Profile</a
+            ><span class="material-symbols-outlined">person</span>Hồ Sơ</a
           >
           <a class="active" href="DigitalAssets.html"
-            ><span class="material-symbols-outlined">storage</span>Digital
-            Assets</a
+            ><span class="material-symbols-outlined">storage</span>Tài Sản Số</a
           >
           <a href="GoGreenMap.html"
-            ><span class="material-symbols-outlined">map</span>Go Green Map</a
+            ><span class="material-symbols-outlined">map</span>Bản Đồ Go
+            Green</a
           >
           <a href="GreenCalculator.html"
-            ><span class="material-symbols-outlined">calculate</span>Green
-            Calculator</a
+            ><span class="material-symbols-outlined">calculate</span>Máy Tính
+            Xanh</a
           >
           <a href="GreenCombat.html"
-            ><span class="material-symbols-outlined">sports_esports</span>Green
-            Combat</a
+            ><span class="material-symbols-outlined">sports_esports</span>So Tài
+            Xanh</a
           >
           <a href="ConfirmAction.html"
-            ><span class="material-symbols-outlined">check_box</span>Confirm
-            Action</a
+            ><span class="material-symbols-outlined">check_box</span>Xác Nhận
+            Hành Động</a
           >
           <a id="signOutBtn" href="#"
-            ><span class="material-symbols-outlined">logout</span>Sign Out</a
+            ><span class="material-symbols-outlined">logout</span>Đăng Xuất</a
           >
         </nav>
       </aside>
 
       <section class="main main-content">
         <header class="topbar">
-          <h1>Digital Assets</h1>
+          <h1>Tài Sản Số</h1>
           <div class="user-area">
-                        <button
+            <button
               id="mobileMenuToggle"
               class="mobile-menu-toggle"
               type="button"
@@ -927,7 +937,7 @@
         <section id="digital-assets-workspace" class="workspace">
           <article class="panel">
             <div class="assets-toolbar">
-              <h3>Asset Library</h3>
+              <h3>Tài Sản Số</h3>
               <div style="display: flex; align-items: center; gap: 12px">
                 <label
                   style="
@@ -938,10 +948,10 @@
                     cursor: pointer;
                   "
                 >
-                  <input id="myAssetsSwitch" type="checkbox" /> My Assets
+                  <input id="myAssetsSwitch" type="checkbox" /> Tài Sản của tôi
                 </label>
                 <button id="openUploadBtn" class="btn-primary" type="button">
-                  Upload Asset
+                  Đăng Tải
                 </button>
               </div>
             </div>
@@ -955,16 +965,16 @@
               <div class="modal-head">
                 <h4>Upload Asset</h4>
                 <button id="closeUploadBtn" class="btn-neutral" type="button">
-                  Close
+                  Đóng
                 </button>
               </div>
               <form id="uploadForm" class="upload-form">
                 <div>
-                  <label for="titleInput">Title *</label>
+                  <label for="titleInput">Tiêu đề *</label>
                   <input id="titleInput" type="text" required />
                 </div>
                 <div>
-                  <label for="descriptionInput">Description</label>
+                  <label for="descriptionInput">Mô tả</label>
                   <textarea id="descriptionInput"></textarea>
                 </div>
                 <div>
@@ -977,7 +987,7 @@
                   />
                 </div>
                 <div>
-                  <label for="externalLinkInput">External Link</label>
+                  <label for="externalLinkInput">Link dẫn tới tài liệu</label>
                   <input
                     id="externalLinkInput"
                     type="url"
@@ -985,7 +995,7 @@
                   />
                 </div>
                 <button id="uploadBtn" class="btn-primary" type="submit">
-                  Upload
+                  Đăng Tải
                 </button>
                 <div id="uploadStatus" class="status"></div>
               </form>
@@ -996,9 +1006,9 @@
             <div id="previewModalOverlay" class="modal-overlay"></div>
             <div class="modal-card">
               <div class="modal-head">
-                <h4 id="previewTitle">Preview</h4>
+                <h4 id="previewTitle">Xem Trước</h4>
                 <button id="closePreviewBtn" class="btn-neutral" type="button">
-                  Close
+                  Đóng
                 </button>
               </div>
               <div id="previewBody" class="preview-body"></div>
@@ -1076,7 +1086,9 @@
             isOpen ? "Close navigation menu" : "Open navigation menu",
           );
 
-          const icon = menuToggleBtn.querySelector(".material-symbols-outlined");
+          const icon = menuToggleBtn.querySelector(
+            ".material-symbols-outlined",
+          );
           if (icon) {
             icon.textContent = isOpen ? "close" : "menu";
           }
@@ -1110,7 +1122,10 @@
         });
 
         window.addEventListener("resize", () => {
-          if (window.innerWidth > 768 && document.body.classList.contains("menu-open")) {
+          if (
+            window.innerWidth > 768 &&
+            document.body.classList.contains("menu-open")
+          ) {
             setMenuState(false);
           }
         });
@@ -1179,9 +1194,9 @@
                         <h4 class="asset-title">${escapeHtml(asset.title || "Untitled")}</h4>
                         <p class="asset-description">${escapeHtml(asset.description || "")}</p>
                         <div class="asset-actions">
-                          <button class="btn-neutral" type="button" data-action="view">View</button>
-                          ${asset.external_link ? '<button class="btn-neutral" type="button" data-action="link">Open Link</button>' : ""}
-                          ${isOwner ? '<button class="btn-danger" type="button" data-action="delete">Delete</button>' : ""}
+                          <button class="btn-neutral" type="button" data-action="view">Xem</button>
+                          ${asset.external_link ? '<button class="btn-neutral" type="button" data-action="link">Mở Link</button>' : ""}
+                          ${isOwner ? '<button class="btn-danger" type="button" data-action="delete">Xóa</button>' : ""}
                         </div>
                       </div>
                     </article>
@@ -1494,4 +1509,3 @@
     </script>
   </body>
 </html>
-

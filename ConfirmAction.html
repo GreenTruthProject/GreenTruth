@@ -1,9 +1,9 @@
 ﻿<!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Confirm Action | Green Truth</title>
+    <title>Xác nhận hành động | Green Truth</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
@@ -404,7 +404,7 @@
         }
       }
 
-      /* Ã¢â€â‚¬Ã¢â€â‚¬ Confirm Action Camera Ã¢â€â‚¬Ã¢â€â‚¬ */
+      /* Ã¢â€â‚¬Ã¢â€â‚¬ Xác nhận hành động Camera Ã¢â€â‚¬Ã¢â€â‚¬ */
       .camera-section {
         grid-column: 1 / -1;
       }
@@ -909,80 +909,91 @@
 
         <nav class="nav">
           <a href="dashboard.html"
-            ><span class="material-symbols-outlined">dashboard</span
-            >Dashboard</a
+            ><span class="material-symbols-outlined">dashboard</span>Bảng Điều
+            Khiển</a
           >
           <a href="profile.html"
-            ><span class="material-symbols-outlined">person</span>Profile</a
+            ><span class="material-symbols-outlined">person</span>Hồ sơ</a
           >
           <a href="DigitalAssets.html"
-            ><span class="material-symbols-outlined">storage</span>Digital
-            Assets</a
+            ><span class="material-symbols-outlined">storage</span>Tài Sản Số</a
           >
           <a href="GoGreenMap.html"
-            ><span class="material-symbols-outlined">map</span>Go Green Map</a
+            ><span class="material-symbols-outlined">map</span>Bản Đồ Go
+            Green</a
           >
           <a href="GreenCalculator.html"
-            ><span class="material-symbols-outlined">calculate</span>Green
-            Calculator</a
+            ><span class="material-symbols-outlined">calculate</span>Máy Tính
+            Xanh</a
           >
           <a href="GreenCombat.html"
-            ><span class="material-symbols-outlined">sports_esports</span>Green
-            Combat</a
+            ><span class="material-symbols-outlined">sports_esports</span>So Tài
+            Xanh</a
           >
           <a class="active" href="ConfirmAction.html"
-            ><span class="material-symbols-outlined">check_box</span>Confirm
-            Action</a
+            ><span class="material-symbols-outlined">check_box</span>Xác Nhận
+            Hành Động</a
           >
           <a id="signOutBtn"
-            ><span class="material-symbols-outlined">logout</span>Sign Out</a
+            ><span class="material-symbols-outlined">logout</span>Đăng Xuất</a
           >
         </nav>
       </aside>
 
       <section class="main main-content">
         <header class="topbar">
-          <h1>Confirm Action</h1>
+          <h1>Xác nhận hành động</h1>
           <div class="user-area">
             <button
               id="mobileMenuToggle"
               class="mobile-menu-toggle"
               type="button"
-              aria-label="Open navigation menu"
+              aria-label="Mở menu điều hướng"
               aria-controls="appSidebar"
               aria-expanded="false"
             >
               <span class="material-symbols-outlined">menu</span>
             </button>
-            <button id="darkToggle" type="button" aria-label="Toggle dark mode">
+            <button
+              id="darkToggle"
+              type="button"
+              aria-label="Bật/tắt chế độ tối"
+            >
               &#127769;
             </button>
-            <span id="userLabel">Loading...</span>
+            <span id="userLabel">Đang tải...</span>
           </div>
         </header>
 
         <section class="workspace">
           <div class="panel camera-section">
-            <h3>Ã°Å¸â€”â€˜Ã¯Â¸Â Trash Collection Verification</h3>
+            <h3>
+              <span class="material-symbols-outlined">check_box</span> Trash
+              Collection Verification
+            </h3>
             <p>
-              Point your camera at yourself picking up trash, then click
-              <strong>Confirm Action</strong> to verify and earn coins.
+              Hướng camera vào hành động nhặt rác của bạn, sau đó bấm
+              <strong>Xác nhận hành động</strong> để xác minh và nhận xu.
             </p>
-            <div id="modelStatus">Loading detection model...</div>
+            <div id="modelStatus">Đang tải mô hình nhận diện...</div>
             <div id="camera-container">
               <div class="camera-wrapper">
                 <video id="cameraFeed" autoplay playsinline muted></video>
               </div>
               <div class="camera-controls">
-                <button id="frontCameraBtn" type="button">Start Front Camera</button>
-                <button id="backCameraBtn" type="button">Start Back Camera</button>
-                <button id="stopCameraBtn" type="button" disabled>Stop Camera</button>
+                <button id="frontCameraBtn" type="button">
+                  Mở camera trước
+                </button>
+                <button id="backCameraBtn" type="button">Mở camera sau</button>
+                <button id="stopCameraBtn" type="button" disabled>
+                  Tắt camera
+                </button>
               </div>
             </div>
             <canvas id="captureCanvas"></canvas>
             <div class="camera-controls">
               <button id="confirmActionBtn" type="button" disabled>
-                Confirm Action
+                Xác nhận hành động
               </button>
             </div>
             <div id="confirmMessage"></div>
@@ -1003,11 +1014,11 @@
         "bottle",
         "cup",
         "can",
-        "plastic bag",
+        "túi nhựa",
         "paper",
         "cardboard",
-        "trash bag",
-        "food wrapper",
+        "túi rác",
+        "vỏ thực phẩm",
       ];
       const MIN_TF_CONFIDENCE = 0.6;
       const MIN_GEMINI_CONFIDENCE = 0.7;
@@ -1059,7 +1070,10 @@
         overlay.addEventListener("click", () => setMenuState(false));
 
         window.addEventListener("resize", () => {
-          if (window.innerWidth > 768 && document.body.classList.contains("menu-open")) {
+          if (
+            window.innerWidth > 768 &&
+            document.body.classList.contains("menu-open")
+          ) {
             setMenuState(false);
           }
         });
@@ -1128,7 +1142,7 @@
         }
 
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          showMessage("This browser does not support camera access.", "error");
+          showMessage("Trình duyệt này không hỗ trợ truy cập camera.", "error");
           return;
         }
 
@@ -1144,16 +1158,17 @@
           updateCameraButtons();
         } catch (err) {
           console.error("[startCamera] Failed:", err);
-          if (err && err.name === "NotAllowedError") {
+          if (err && err.name === "KhôngtAllowedError") {
             showMessage("Camera permission was denied.", "error");
           } else if (
             err &&
-            (err.name === "NotFoundError" || err.name === "OverconstrainedError")
+            (err.name === "KhôngtFoundError" ||
+              err.name === "OverconstrainedError")
           ) {
             showMessage(
               mode === "environment"
-                ? "No rear-facing camera was found on this device."
-                : "No front-facing camera was found on this device.",
+                ? "Không tìm thấy camera sau trên thiết bị này."
+                : "Không tìm thấy camera trước trên thiết bị này.",
               "error",
             );
           } else {
@@ -1171,18 +1186,18 @@
       // â”€â”€ MODEL LOADING Ã¢â€â‚¬Ã¢â€â‚¬
       async function loadModel() {
         try {
-          modelStatus.textContent = "Loading detection model...";
+          modelStatus.textContent = "Đang tải mô hình nhận diện...";
           cocoModel = await cocoSsd.load();
           isModelLoaded = true;
-          modelStatus.textContent = "Model ready";
+          modelStatus.textContent = "Mô hình đã sẵn sàng";
           updateCameraButtons();
         } catch (err) {
           console.error("[loadModel] Failed:", err);
           isModelLoaded = false;
-          modelStatus.textContent = "Model failed to load";
+          modelStatus.textContent = "Không tải được mô hình";
           updateCameraButtons();
           showMessage(
-            "Could not load the detection model. Please refresh.",
+            "Không thể tải mô hình nhận diện. Vui lòng tải lại trang.",
             "error",
           );
         }
@@ -1278,7 +1293,7 @@
 
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error("Verification failed: " + errorText);
+          throw new Error("Xác minh thất bại: " + errorText);
         }
 
         const result = await response.json();
@@ -1345,7 +1360,7 @@
       // Ã¢â€â‚¬Ã¢â€â‚¬ MAIN CONFIRM ACTION HANDLER Ã¢â€â‚¬Ã¢â€â‚¬
       confirmActionBtn.addEventListener("click", async () => {
         if (!cocoModel) {
-          showMessage("Model is not loaded yet. Please wait.", "error");
+          showMessage("Mô hình chưa tải xong. Vui lòng chờ.", "error");
           return;
         }
         if (!cameraStream || !cameraPreview.videoWidth) {
@@ -1416,14 +1431,16 @@
             logStep(`Ã°Å¸â€œÂ GPS distance: ${dist.toFixed(0)}m`);
             if (dist > MAX_GPS_DISTANCE_METERS) {
               showMessage(
-                `Rejected: Image GPS is ${dist.toFixed(0)}m away from your location (max ${MAX_GPS_DISTANCE_METERS}m).`,
+                `Từ chối: GPS của ảnh cách vị trí của bạn ${dist.toFixed(0)}m (tối đa ${MAX_GPS_DISTANCE_METERS}m).`,
                 "error",
               );
               return;
             }
             logStep("Ã¢Å“â€¦ GPS location verified");
           } else {
-            logStep("Ã¢â€žÂ¹Ã¯Â¸Â No EXIF GPS found (live camera capture Ã¢â‚¬â€ OK)");
+            logStep(
+              "Ã¢â€žÂ¹Ã¯Â¸Â Không EXIF GPS found (live camera capture Ã¢â‚¬â€ OK)",
+            );
           }
 
           // Step 6: Timestamp validation
@@ -1434,19 +1451,21 @@
             const age = Date.now() - photoTime.getTime();
             if (age > MAX_TIMESTAMP_AGE_MS) {
               showMessage(
-                "Rejected: Image timestamp is older than 10 minutes.",
+                "Từ chối: Ảnh có thời gian chụp cũ hơn 10 phút.",
                 "error",
               );
               return;
             }
             logStep("Ã¢Å“â€¦ Timestamp verified");
           } else {
-            logStep("Ã¢â€žÂ¹Ã¯Â¸Â No EXIF timestamp (live capture Ã¢â‚¬â€ OK)");
+            logStep(
+              "Ã¢â€žÂ¹Ã¯Â¸Â Không EXIF timestamp (live capture Ã¢â‚¬â€ OK)",
+            );
           }
 
           // Step 7: Send to Gemini
           logStep("Ã°Å¸Â¤â€“ Sending image to Gemini AI for verification...");
-          confirmActionBtn.textContent = "AI Verifying...";
+          confirmActionBtn.textContent = "AI đang xác minh...";
 
           const base64 = captureCanvas
             .toDataURL("image/jpeg", 0.85)
@@ -1472,14 +1491,14 @@
             }
           } else {
             showMessage(
-              `Rejected: ${geminiResult.reason || "No valid cleanup detected."}`,
+              `Từ chối: ${geminiResult.reason || "Không phát hiện hành động dọn rác hợp lệ."}`,
               "error",
             );
           }
         } catch (err) {
           console.error("[confirmAction] Error:", err);
           showMessage(
-            "Verification failed: " + (err.message || "Unknown error"),
+            "Xác minh thất bại: " + (err.message || "Lỗi không xác định"),
             "error",
           );
         } finally {
@@ -1492,8 +1511,8 @@
       updateCameraButtons();
       loadModel();
     </script>
-  
-        <script>
+
+    <script>
       (function recognizeTrashIntegration() {
         const root = document.documentElement;
         if (root.dataset.recognizeTrashIntegrationInitialized === "1") return;
@@ -1610,11 +1629,14 @@
             resultTargets.recyclable,
             typeof payload.recyclable === "boolean"
               ? payload.recyclable
-                ? "Yes"
-                : "No"
+                ? "Có"
+                : "Không"
               : "",
           );
-          setText(resultTargets.confidence, normalizeConfidence(payload.confidence));
+          setText(
+            resultTargets.confidence,
+            normalizeConfidence(payload.confidence),
+          );
           setText(
             resultTargets.disposal_instruction,
             payload.disposal_instruction || "",
@@ -1672,10 +1694,14 @@
             reader.onload = () => {
               const result = String(reader.result || "");
               const commaIdx = result.indexOf(",");
-              state.base64Image = commaIdx >= 0 ? result.slice(commaIdx + 1) : result;
+              state.base64Image =
+                commaIdx >= 0 ? result.slice(commaIdx + 1) : result;
             };
             reader.onerror = (err) => {
-              console.error("[recognizeTrashIntegration] FileReader error:", err);
+              console.error(
+                "[recognizeTrashIntegration] FileReader error:",
+                err,
+              );
               state.base64Image = "";
               showMessage("Could not read image file.", "error");
             };
@@ -1691,7 +1717,7 @@
           const patchedVerifyWithEdge = async function (base64Image) {
             const image = base64Image || state.base64Image || getCanvasBase64();
             if (!image) {
-              throw new Error("Please select or capture an image first.");
+              throw new Error("Vui lòng chọn hoặc chụp ảnh trước.");
             }
 
             const payload = await analyzeWithEdge(image);
@@ -1701,10 +1727,12 @@
               payload.explanation ||
               payload.disposal_instruction ||
               payload.object_name ||
-              "No valid cleanup detected.";
+              "Không phát hiện hành động dọn rác hợp lệ.";
 
             return {
-              cleanup_detected: Boolean(payload.object_name || payload.category),
+              cleanup_detected: Boolean(
+                payload.object_name || payload.category,
+              ),
               confidence: toProbability(payload.confidence),
               reason: reason,
               object_name: payload.object_name || "",
@@ -1733,7 +1761,7 @@
 
             const image = state.base64Image || getCanvasBase64();
             if (!image) {
-              showMessage("Please select an image first.", "error");
+              showMessage("Vui lòng chọn ảnh trước.", "error");
               return;
             }
 
@@ -1741,10 +1769,10 @@
               setLoading(true);
               const payload = await analyzeWithEdge(image);
               renderResult(payload);
-              showMessage("Analysis completed.", "success");
+              showMessage("Phân tích hoàn tất.", "success");
             } catch (error) {
               console.error("[recognizeTrashIntegration] API error:", error);
-              showMessage("Analysis failed. Please try again.", "error");
+              showMessage("Phân tích thất bại. Vui lòng thử lại.", "error");
             } finally {
               setLoading(false);
             }
@@ -1754,31 +1782,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
