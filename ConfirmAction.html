@@ -420,7 +420,7 @@
         background: #000;
       }
 
-      #frontCamera {
+      #cameraFeed {
         display: block;
         width: 100%;
         border-radius: 12px;
@@ -465,7 +465,8 @@
         cursor: not-allowed;
       }
 
-      #startCameraBtn,
+      #frontCameraBtn,
+      #backCameraBtn,
       #stopCameraBtn {
         border: none;
         border-radius: 10px;
@@ -476,15 +477,20 @@
         cursor: pointer;
       }
 
-      #startCameraBtn {
+      #frontCameraBtn {
         background: #2e7d32;
+      }
+
+      #backCameraBtn {
+        background: #1565c0;
       }
 
       #stopCameraBtn {
         background: #b12f2f;
       }
 
-      #startCameraBtn:disabled,
+      #frontCameraBtn:disabled,
+      #backCameraBtn:disabled,
       #stopCameraBtn:disabled {
         opacity: 0.6;
         cursor: not-allowed;
@@ -656,7 +662,8 @@
         .btn-neutral,
         .btn-danger,
         #confirmActionBtn,
-        #startCameraBtn,
+        #frontCameraBtn,
+        #backCameraBtn,
         #stopCameraBtn {
           width: 100%;
           text-align: center;
@@ -964,10 +971,11 @@
             <div id="modelStatus">Loading detection model...</div>
             <div id="camera-container">
               <div class="camera-wrapper">
-                <video id="frontCamera" autoplay playsinline muted></video>
+                <video id="cameraFeed" autoplay playsinline muted></video>
               </div>
               <div class="camera-controls">
-                <button id="startCameraBtn" type="button">Start Front Camera</button>
+                <button id="frontCameraBtn" type="button">Start Front Camera</button>
+                <button id="backCameraBtn" type="button">Start Back Camera</button>
                 <button id="stopCameraBtn" type="button" disabled>Stop Camera</button>
               </div>
             </div>
@@ -1011,9 +1019,10 @@
       const userLabel = document.getElementById("userLabel");
       const signOutBtn = document.getElementById("signOutBtn");
       const toggle = document.getElementById("darkToggle");
-      const cameraPreview = document.getElementById("frontCamera");
+      const cameraPreview = document.getElementById("cameraFeed");
       const captureCanvas = document.getElementById("captureCanvas");
-      const startCameraBtn = document.getElementById("startCameraBtn");
+      const frontCameraBtn = document.getElementById("frontCameraBtn");
+      const backCameraBtn = document.getElementById("backCameraBtn");
       const stopCameraBtn = document.getElementById("stopCameraBtn");
       const confirmActionBtn = document.getElementById("confirmActionBtn");
       const confirmMessage = document.getElementById("confirmMessage");
@@ -1091,7 +1100,8 @@
       // CAMERA
       function updateCameraButtons() {
         const hasCamera = Boolean(cameraStream);
-        startCameraBtn.disabled = hasCamera;
+        frontCameraBtn.disabled = false;
+        backCameraBtn.disabled = false;
         stopCameraBtn.disabled = !hasCamera;
         confirmActionBtn.disabled = !(isModelLoaded && hasCamera);
       }
@@ -1108,7 +1118,7 @@
         updateCameraButtons();
       }
 
-      async function startFrontCamera() {
+      async function startCamera(mode) {
         if (!window.isSecureContext) {
           showMessage(
             "Camera requires HTTPS or localhost. Please open this page in a secure context.",
@@ -1122,28 +1132,30 @@
           return;
         }
 
-        if (cameraStream) {
-          updateCameraButtons();
-          return;
-        }
+        if (cameraStream) stopCamera();
 
         try {
           cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "user" },
+            video: { facingMode: mode },
             audio: false,
           });
           cameraPreview.srcObject = cameraStream;
           showMessage("", "");
           updateCameraButtons();
         } catch (err) {
-          console.error("[startFrontCamera] Failed:", err);
+          console.error("[startCamera] Failed:", err);
           if (err && err.name === "NotAllowedError") {
             showMessage("Camera permission was denied.", "error");
           } else if (
             err &&
             (err.name === "NotFoundError" || err.name === "OverconstrainedError")
           ) {
-            showMessage("No front-facing camera was found on this device.", "error");
+            showMessage(
+              mode === "environment"
+                ? "No rear-facing camera was found on this device."
+                : "No front-facing camera was found on this device.",
+              "error",
+            );
           } else {
             showMessage("Camera permission denied or unavailable.", "error");
           }
@@ -1151,7 +1163,8 @@
         }
       }
 
-      startCameraBtn.addEventListener("click", startFrontCamera);
+      frontCameraBtn.addEventListener("click", () => startCamera("user"));
+      backCameraBtn.addEventListener("click", () => startCamera("environment"));
       stopCameraBtn.addEventListener("click", stopCamera);
       window.addEventListener("beforeunload", stopCamera);
 
@@ -1741,6 +1754,15 @@
     </script>
   </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 
