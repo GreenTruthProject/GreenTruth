@@ -1,6 +1,7 @@
 ﻿<!doctype html>
 <html lang="vi">
   <head>
+    <link rel="icon" type="image/x-icon" href="resources/Favicon.png" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Xác nhận hành động | Green Truth</title>
@@ -1376,45 +1377,40 @@
 
         try {
           // Step 1: Capture frame
-          logStep("Ã°Å¸â€œÂ· Capturing image...");
+          logStep("Capturing image...");
           captureCanvas.width = cameraPreview.videoWidth;
           captureCanvas.height = cameraPreview.videoHeight;
           const ctx = captureCanvas.getContext("2d");
           ctx.drawImage(cameraPreview, 0, 0);
 
           // Step 2: TF.js primary detection
-          logStep("Ã°Å¸â€Â Running TensorFlow.js detection...");
+          logStep("Running TensorFlow.js detection...");
           const predictions = await cocoModel.detect(captureCanvas);
           console.log("[confirmAction] TF detections:", predictions);
 
           const tfResult = validateTFDetections(predictions);
           if (tfResult.detected) {
             logStep(
-              `Ã¢Å“â€¦ TF.js detected: ${tfResult.object} (${(tfResult.score * 100).toFixed(1)}%)`,
+              `TF.js detected: ${tfResult.object} (${(tfResult.score * 100).toFixed(1)}%)`,
             );
             const awarded = await awardCoins();
             if (awarded) {
-              showMessage(
-                "Ã°Å¸Å½â€° +5 coins awarded! Trash detected by AI.",
-                "success",
-              );
+              showMessage("+5 coins awarded! Trash detected by AI.", "success");
             }
             return;
           }
 
-          logStep(
-            "Ã¢Å¡Â Ã¯Â¸Â TF.js did not detect trash. Falling back to Gemini...",
-          );
+          logStep("TF.js did not detect trash. Falling back to Gemini...");
 
           // Step 3: Get user GPS
-          logStep("Ã°Å¸â€œÂ Acquiring your GPS location...");
+          logStep("Acquiring your GPS location...");
           userGPS = await getUserGPS();
           if (!userGPS) {
-            logStep("Ã¢ÂÅ’ GPS unavailable Ã¢â‚¬â€ skipping location check");
+            logStep("GPS unavailable — skipping location check");
           }
 
           // Step 4: Extract EXIF from captured image
-          logStep("Ã°Å¸â€Å½ Checking image metadata...");
+          logStep("Checking image metadata...");
           const imageBlob = await new Promise((resolve) =>
             captureCanvas.toBlob(resolve, "image/jpeg", 0.9),
           );
@@ -1428,7 +1424,7 @@
               exifData.lat,
               exifData.lng,
             );
-            logStep(`Ã°Å¸â€œÂ GPS distance: ${dist.toFixed(0)}m`);
+            logStep(`GPS distance: ${dist.toFixed(0)}m`);
             if (dist > MAX_GPS_DISTANCE_METERS) {
               showMessage(
                 `Từ chối: GPS của ảnh cách vị trí của bạn ${dist.toFixed(0)}m (tối đa ${MAX_GPS_DISTANCE_METERS}m).`,
@@ -1436,11 +1432,9 @@
               );
               return;
             }
-            logStep("Ã¢Å“â€¦ GPS location verified");
+            logStep("GPS location verified");
           } else {
-            logStep(
-              "Ã¢â€žÂ¹Ã¯Â¸Â Không EXIF GPS found (live camera capture Ã¢â‚¬â€ OK)",
-            );
+            logStep("Không EXIF GPS found (live camera capture — OK)");
           }
 
           // Step 6: Timestamp validation
@@ -1456,15 +1450,13 @@
               );
               return;
             }
-            logStep("Ã¢Å“â€¦ Timestamp verified");
+            logStep("Timestamp verified");
           } else {
-            logStep(
-              "Ã¢â€žÂ¹Ã¯Â¸Â Không EXIF timestamp (live capture Ã¢â‚¬â€ OK)",
-            );
+            logStep("Không EXIF timestamp (live capture — OK)");
           }
 
           // Step 7: Send to Gemini
-          logStep("Ã°Å¸Â¤â€“ Sending image to Gemini AI for verification...");
+          logStep("Sending image to Gemini AI for verification...");
           confirmActionBtn.textContent = "AI đang xác minh...";
 
           const base64 = captureCanvas
@@ -1474,18 +1466,18 @@
           console.log("[confirmAction] Gemini result:", geminiResult);
 
           logStep(
-            `Ã°Å¸Â¤â€“ Gemini: ${geminiResult.reason} (confidence: ${(geminiResult.confidence * 100).toFixed(0)}%)`,
+            `Gemini: ${geminiResult.reason} (confidence: ${(geminiResult.confidence * 100).toFixed(0)}%)`,
           );
 
           if (
             geminiResult.cleanup_detected &&
             geminiResult.confidence >= MIN_GEMINI_CONFIDENCE
           ) {
-            logStep("Ã¢Å“â€¦ Gemini approved cleanup action");
+            logStep("Gemini approved cleanup action");
             const awarded = await awardCoins();
             if (awarded) {
               showMessage(
-                "Ã°Å¸Å½â€° +5 coins awarded! Verified by Gemini AI.",
+                "+5 coins awarded! Verified by Gemini AI.",
                 "success",
               );
             }
