@@ -188,9 +188,116 @@
         min-width: 0;
       }
 
+      .plant-form-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 2150;
+        background: rgba(0, 0, 0, 0.55);
+        place-items: center;
+        padding: 18px;
+      }
+
+      .plant-form-card {
+        width: min(94vw, 520px);
+        background: #fff;
+        border-radius: 22px;
+        padding: 18px;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+      }
+
+      .plant-form-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .plant-form-head h2 {
+        margin: 0;
+        font-size: 1.15rem;
+      }
+
+      .plant-form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .plant-form label {
+        display: grid;
+        gap: 6px;
+        font-weight: 600;
+      }
+
+      .plant-form input,
+      .plant-form textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+      }
+
+      .plant-form textarea {
+        min-height: 96px;
+        resize: vertical;
+      }
+
+      .plant-form-location {
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #f7faf4;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .plant-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .plant-form-actions button,
+      .plant-form-head button {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .plant-form-actions .primary {
+        border: none;
+        background: #2e7d32;
+        color: #fff;
+      }
+
+      .plant-form-actions button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
       body.dark .map-toolbar {
         background: rgba(30, 30, 30, 0.94);
         border-top-color: #3a3a3a;
+      }
+
+      body.dark .plant-form-card {
+        background: #2d2d2d;
+        border: 1px solid #3a3a3a;
+      }
+
+      body.dark .plant-form-head h2,
+      body.dark .plant-form label {
+        color: #eaeaea;
+      }
+
+      body.dark .plant-form-location {
+        background: #252526;
+        border-color: #444;
+        color: #b7bdcc;
       }
       #darkToggle {
         border: 1px solid #d1d7cc;
@@ -1317,8 +1424,20 @@
           grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         }
       }
-    </style>
-      <script src="auth-guard.js"></script>
+    
+      /* Fixed desktop workspace chrome */
+      @media (min-width: 861px) {
+        .shell { display: block; }
+        .sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100dvh; z-index: 40; }
+        .main { margin-left: 240px; padding-top: 64px; min-height: 100vh; }
+        .topbar { position: fixed; top: 0; left: 240px; right: 0; z-index: 35; }
+      }
+      @media (max-width: 860px) {
+        .main { margin-left: 0; padding-top: 0; }
+        .topbar { position: sticky; top: 0; left: auto; right: auto; }
+      }
+</style>
+    <script src="auth-guard.js"></script>
   </head>
 
   <body>
@@ -1362,6 +1481,10 @@
           <a href="GreenCombat.html"
             ><span class="material-symbols-outlined">sports_esports</span>So Tài
             Xanh</a
+          >
+          <a href="VRPlantStudio.html"
+            ><span class="material-symbols-outlined">head_mounted_device</span
+            >VR Plant Studio</a
           >
           <a href="Chatbot.html"
             ><span class="material-symbols-outlined">smart_toy</span>Chatbot</a
@@ -1483,6 +1606,47 @@
           <button id="closeCapsuleModal" type="button">Đóng</button>
         </div>
         <div id="capsuleModalBody" style="margin-top: 14px"></div>
+      </div>
+    </div>
+    <div id="plantFormModal" class="plant-form-modal" aria-hidden="true">
+      <div
+        class="plant-form-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="plantFormTitle"
+      >
+        <div class="plant-form-head">
+          <h2 id="plantFormTitle">Trồng Cây Ở Đây</h2>
+          <button id="closePlantFormBtn" type="button">Đóng</button>
+        </div>
+        <form id="plantForm" class="plant-form">
+          <div id="plantFormLocation" class="plant-form-location">
+            Đang lấy vị trí...
+          </div>
+          <label>
+            Tên cây
+            <input
+              id="plantNameInput"
+              name="plantName"
+              maxlength="120"
+              placeholder="Ví dụ: Cây xoài"
+            />
+          </label>
+          <label>
+            Mô tả
+            <textarea
+              id="plantDescriptionInput"
+              name="description"
+              placeholder="Ghi chú về cây, vị trí, câu chuyện..."
+            ></textarea>
+          </label>
+          <div class="plant-form-actions">
+            <button id="cancelPlantFormBtn" type="button">Hủy</button>
+            <button id="savePlantFormBtn" class="primary" type="submit">
+              Lưu cây
+            </button>
+          </div>
+        </form>
       </div>
     </div>
     <aside id="plantSidebar" class="plant-sidebar" aria-hidden="true">
@@ -1635,6 +1799,16 @@
       const capsuleModalTitle = document.getElementById("capsuleModalTitle");
       const capsuleModalBody = document.getElementById("capsuleModalBody");
       const closeCapsuleModal = document.getElementById("closeCapsuleModal");
+      const plantFormModal = document.getElementById("plantFormModal");
+      const plantForm = document.getElementById("plantForm");
+      const plantFormLocation = document.getElementById("plantFormLocation");
+      const plantNameInput = document.getElementById("plantNameInput");
+      const plantDescriptionInput = document.getElementById(
+        "plantDescriptionInput",
+      );
+      const closePlantFormBtn = document.getElementById("closePlantFormBtn");
+      const cancelPlantFormBtn = document.getElementById("cancelPlantFormBtn");
+      const savePlantFormBtn = document.getElementById("savePlantFormBtn");
 
       let map;
       let markers = {};
@@ -1649,6 +1823,7 @@
       let sharedItemCache = {};
       let foodShareCache = {};
       let activeMapLayer = "all";
+      let pendingPlantLocation = null;
 
       function applySessionState(session) {
         if (session) {
@@ -2283,7 +2458,7 @@
         if (id) openCapsule(id);
       }
 
-      async function createPlantAtLocation(lat, lng) {
+      async function createPlantAtLocation(lat, lng, formData = {}) {
         const {
           data: { user },
           error: userError,
@@ -2293,9 +2468,8 @@
           throw new Error("Unable to identify signed-in user.");
         }
 
-        const name = prompt("Plant name:");
-        const safeName = name && name.trim() ? name.trim() : "Plant";
-        const desc = prompt("Description:");
+        const safeName = formData.plantName?.trim() || "Plant";
+        const desc = formData.description?.trim() || null;
 
         const { data: insertedRow, error: insertError } = await _supabase
           .from("plants")
@@ -2304,7 +2478,7 @@
               latitude: lat,
               longitude: lng,
               plant_name: safeName,
-              description: desc || null,
+              description: desc,
               owner_id: user.id,
               created_at: new Date().toISOString(),
             },
@@ -2325,6 +2499,24 @@
         }
 
         return normalizePlant(enrichedRow);
+      }
+
+      function openPlantForm(lat, lng) {
+        pendingPlantLocation = { lat, lng };
+        plantNameInput.value = "";
+        plantDescriptionInput.value = "";
+        plantFormLocation.textContent = `Vị trí: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        plantFormModal.style.display = "grid";
+        plantFormModal.setAttribute("aria-hidden", "false");
+        setTimeout(() => plantNameInput.focus(), 0);
+      }
+
+      function closePlantForm() {
+        pendingPlantLocation = null;
+        plantFormModal.style.display = "none";
+        plantFormModal.setAttribute("aria-hidden", "true");
+        savePlantFormBtn.disabled = false;
+        savePlantFormBtn.textContent = "Lưu cây";
       }
 
       function addPlantUpdate(id) {
@@ -2395,13 +2587,7 @@
             async (position) => {
               try {
                 const { latitude, longitude } = position.coords;
-                const created = await createPlantAtLocation(
-                  latitude,
-                  longitude,
-                );
-                if (created) {
-                  map.setView([created.lat, created.lng], 16);
-                }
+                openPlantForm(latitude, longitude);
               } catch (error) {
                 console.error("[plantHereBtn] Failed:", error);
                 alert(error.message || "Unable to plant here.");
@@ -2786,6 +2972,39 @@
       );
       capsuleModal.addEventListener("click", (event) => {
         if (event.target === capsuleModal) capsuleModal.style.display = "none";
+      });
+
+      closePlantFormBtn.addEventListener("click", closePlantForm);
+      cancelPlantFormBtn.addEventListener("click", closePlantForm);
+      plantFormModal.addEventListener("click", (event) => {
+        if (event.target === plantFormModal) closePlantForm();
+      });
+      plantForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!pendingPlantLocation) return;
+
+        savePlantFormBtn.disabled = true;
+        savePlantFormBtn.textContent = "Đang lưu...";
+
+        try {
+          const created = await createPlantAtLocation(
+            pendingPlantLocation.lat,
+            pendingPlantLocation.lng,
+            {
+              plantName: plantNameInput.value,
+              description: plantDescriptionInput.value,
+            },
+          );
+          if (created) {
+            map.setView([created.lat, created.lng], 16);
+          }
+          closePlantForm();
+        } catch (error) {
+          console.error("[plantForm] Failed:", error);
+          alert(error.message || "Unable to plant here.");
+          savePlantFormBtn.disabled = false;
+          savePlantFormBtn.textContent = "Lưu cây";
+        }
       });
 
       // ACTIONS
