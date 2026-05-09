@@ -2,6 +2,7 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const { URL } = require("url");
+const { createClient } = require("@supabase/supabase-js");
 
 const envPath = path.join(process.cwd(), ".env");
 if (fs.existsSync(envPath)) {
@@ -32,6 +33,17 @@ const RESEND_API_KEY =
 const ALERT_TO_EMAIL = process.env.ALERT_TO_EMAIL || "tuantk2009@gmail.com";
 const ALERT_FROM_EMAIL =
   process.env.ALERT_FROM_EMAIL || "onboarding@resend.dev";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const CAPSULE_WORKER_INTERVAL_MS = Number(
+  process.env.CAPSULE_WORKER_INTERVAL_MS || 60 * 60 * 1000,
+);
+const capsuleAdmin =
+  SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+    ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      })
+    : null;
 
 const SYSTEM_PROMPT = `Role: You are "Leaf," a passionate, highly knowledgeable, and pragmatic environmentalist inside the Green Truth website. Your mission is to help people transition to more sustainable lifestyles, explain how the website works, and guide them to the right Green Truth feature for each task.
 
@@ -344,6 +356,36 @@ async function handleGreenAlert(req, res) {
   }
 }
 
+async function deliverDueTimeCapsules() {
+  if (!capsuleAdmin) return { ok: false, skipped: true };
+  const { data, error } = await capsuleAdmin.rpc("open_due_time_capsules");
+  if (error) throw error;
+  return { ok: true, opened: Number(data || 0) };
+}
+
+function startTimeCapsuleWorker() {
+  if (!capsuleAdmin) {
+    console.warn(
+      "Time Capsule worker disabled: missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.",
+    );
+    return;
+  }
+
+  const tick = async () => {
+    try {
+      const result = await deliverDueTimeCapsules();
+      if (result.opened) {
+        console.log(`Time Capsule worker opened ${result.opened} capsule(s).`);
+      }
+    } catch (error) {
+      console.error("Time Capsule worker failed:", error.message || error);
+    }
+  };
+
+  tick();
+  setInterval(tick, CAPSULE_WORKER_INTERVAL_MS);
+}
+
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(
     req.url || "/",
@@ -370,11 +412,26 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (
+    requestUrl.pathname === "/api/time-capsules/deliver" &&
+    req.method === "POST"
+  ) {
+    try {
+      sendJson(res, 200, await deliverDueTimeCapsules());
+    } catch (error) {
+      sendJson(res, 500, {
+        error: error.message || "Time Capsule delivery failed.",
+      });
+    }
+    return;
+  }
+
   if (requestUrl.pathname === "/api/health" && req.method === "GET") {
     sendJson(res, 200, {
       ok: true,
       hasApiKey: Boolean(GEMINI_API_KEY),
       hasEmailKey: Boolean(RESEND_API_KEY),
+      hasCapsuleWorker: Boolean(capsuleAdmin),
       model: GEMINI_MODEL,
       provider: "gemini",
     });
@@ -428,3 +485,4 @@ function startServer(port, attempt = 0) {
 }
 
 startServer(DEFAULT_PORT);
+startTimeCapsuleWorker();

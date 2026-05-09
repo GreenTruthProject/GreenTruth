@@ -105,8 +105,24 @@
       }
       .list {
         display: grid;
-        gap: 14px;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
         margin-top: 18px;
+      }
+      .submission {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        transition:
+          transform 180ms ease,
+          box-shadow 180ms ease;
+      }
+      .submission:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.11);
+      }
+      .submission.empty-state {
+        grid-column: 1 / -1;
       }
       .pill {
         display: inline-flex;
@@ -179,7 +195,115 @@
           position: static;
         }
       }
+
+      /* Responsive hardening */
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      img,
+      video,
+      iframe,
+      canvas,
+      svg,
+      table {
+        max-width: 100%;
+      }
+      :where(
+        .shell,
+        .main,
+        .sidebar,
+        .topbar,
+        .card,
+        .panel,
+        .grid,
+        form,
+        table
+      ) {
+        min-width: 0;
+      }
+      :where(
+        h1,
+        h2,
+        h3,
+        p,
+        span,
+        a,
+        button,
+        td,
+        th,
+        li,
+        label,
+        input,
+        textarea,
+        select
+      ) {
+        overflow-wrap: anywhere;
+      }
+      :where(a, button, input, select, textarea) {
+        min-height: 44px;
+      }
+      .shell {
+        min-height: 100dvh;
+        grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+      }
+      .sidebar {
+        height: 100dvh;
+      }
+      .main {
+        min-width: 0;
+        overflow-x: clip;
+      }
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      @media (max-width: 900px) {
+        .shell {
+          display: block;
+          min-height: 100dvh;
+        }
+        .sidebar {
+          position: static;
+          width: 100%;
+          height: auto;
+          max-height: none;
+        }
+        .main {
+          width: 100%;
+          padding: 12px;
+        }
+        .topbar {
+          position: sticky;
+          top: 0;
+          z-index: 50;
+          display: grid;
+          gap: 10px;
+        }
+        .grid,
+        .field-row {
+          grid-template-columns: 1fr !important;
+        }
+        .list {
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+        .card,
+        .panel {
+          width: 100%;
+          max-width: 100%;
+          padding: clamp(14px, 4vw, 20px);
+        }
+      }
     </style>
+      <script src="auth-guard.js"></script>
   </head>
   <body>
     <div class="shell">
@@ -204,6 +328,9 @@
           <a class="active" href="GreenCombatReview.html"
             ><span class="material-symbols-outlined">fact_check</span>Duyệt
             Submission</a
+          >
+          <a href="GreenCombatCoinsAdmin.html"
+            ><span class="material-symbols-outlined">paid</span>Coin Admin</a
           >
           <a href="login.html"
             ><span class="material-symbols-outlined">logout</span>Đăng Xuất</a
@@ -254,7 +381,7 @@
       function renderSubmissions(rows) {
         if (!rows.length) {
           submissionList.innerHTML =
-            '<section class="submission"><strong>Không có submission pending nào.</strong></section>';
+            '<section class="submission empty-state"><strong>Không có submission pending nào.</strong></section>';
           return;
         }
 

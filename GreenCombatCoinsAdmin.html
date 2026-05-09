@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Green Combat Coin Admin</title>
+    <link rel="icon" type="image/x-icon" href="resources/Favicon.png" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      :root {
+        --bg: #eef4ea;
+        --panel: #ffffff;
+        --line: #d8e2d2;
+        --text: #203025;
+        --muted: #607064;
+        --accent: #2f7a45;
+        --accent-soft: #e7f4e7;
+        --danger: #9f3333;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      body {
+        margin: 0;
+        font-family: Georgia, serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .shell {
+        display: grid;
+        grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+        min-height: 100dvh;
+      }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100dvh;
+        background: #f5f7f3;
+        border-right: 1px solid var(--line);
+        padding: 24px 18px;
+        overflow-y: hidden;
+      }
+      .sidebar:hover,
+      .sidebar:focus-within {
+        overflow-y: auto;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        margin-bottom: 18px;
+      }
+      .brand img {
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
+      }
+      .nav a {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        text-decoration: none;
+        color: var(--text);
+        padding: 10px 12px;
+        border-radius: 12px;
+        margin-bottom: 6px;
+        min-height: 44px;
+      }
+      .nav a.active {
+        background: var(--accent);
+        color: #fff;
+      }
+      .main {
+        min-width: 0;
+        padding: 28px;
+        overflow-x: clip;
+      }
+      .topbar,
+      .panel-head,
+      .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+      }
+      .panel,
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(34, 53, 31, 0.06);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+        gap: 18px;
+        margin-top: 18px;
+      }
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font: inherit;
+        min-height: 44px;
+      }
+      button {
+        border: none;
+        border-radius: 12px;
+        padding: 11px 14px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        min-height: 44px;
+      }
+      button:disabled,
+      input:disabled {
+        cursor: not-allowed;
+        opacity: 0.62;
+      }
+      .action {
+        background: var(--accent);
+        color: #fff;
+      }
+      .ghost {
+        background: #edf3eb;
+        color: var(--text);
+      }
+      .pill {
+        display: inline-flex;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .message {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: #f7faf5;
+      }
+      .hidden {
+        display: none;
+      }
+      .summary {
+        display: grid;
+        gap: 8px;
+        margin-top: 14px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fbfcfa;
+      }
+      :where(h1, h2, h3, p, span, a, button, td, th, li, label, input) {
+        overflow-wrap: anywhere;
+      }
+      @media (max-width: 900px) {
+        .shell {
+          display: block;
+        }
+        .sidebar {
+          position: static;
+          height: auto;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+        }
+        .main {
+          padding: 12px;
+        }
+        .topbar,
+        .panel-head {
+          display: grid;
+        }
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+        .panel,
+        .card {
+          padding: clamp(14px, 4vw, 20px);
+        }
+      }
+    </style>
+      <script src="auth-guard.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <img src="resources/logo_type_shit.png" alt="Green Truth logo" />
+          <span>Green Truth</span>
+        </div>
+        <nav class="nav">
+          <a href="dashboard.html"
+            ><span class="material-symbols-outlined">dashboard</span>Bảng Điều
+            Khiển</a
+          >
+          <a href="GreenCombat.html"
+            ><span class="material-symbols-outlined">sports_esports</span>So Tài
+            Xanh</a
+          >
+          <a href="GreenCombatAdmin.html"
+            ><span class="material-symbols-outlined">admin_panel_settings</span
+            >Combat Admin</a
+          >
+          <a href="GreenCombatReview.html"
+            ><span class="material-symbols-outlined">fact_check</span>Duyệt
+            Submission</a
+          >
+          <a class="active" href="GreenCombatCoinsAdmin.html"
+            ><span class="material-symbols-outlined">paid</span>Coin Admin</a
+          >
+          <a href="login.html"
+            ><span class="material-symbols-outlined">logout</span>Đăng Xuất</a
+          >
+        </nav>
+      </aside>
+
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <div class="muted">Active combat admins only</div>
+            <h1>Điều chỉnh xu người dùng</h1>
+          </div>
+          <div id="userLabel" class="pill">Đang tải...</div>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Coin control</h3>
+              <p class="muted">
+                Owner và user active trong `combat_admins` có thể đặt lại số xu
+                của người dùng.
+              </p>
+            </div>
+            <button id="refreshBtn" class="ghost" type="button">
+              Kiểm tra quyền
+            </button>
+          </div>
+          <div id="accessMessage" class="message hidden"></div>
+        </section>
+
+        <section class="grid">
+          <section class="card">
+            <h3>Tìm profile</h3>
+            <form id="lookupForm" class="field" style="margin-top: 16px">
+              <div class="field">
+                <label for="profileIdInput">Profile ID</label>
+                <input
+                  id="profileIdInput"
+                  type="text"
+                  placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                  required
+                />
+              </div>
+              <button class="ghost" type="submit">Tải số xu hiện tại</button>
+            </form>
+            <div id="profileSummary" class="summary hidden"></div>
+          </section>
+
+          <section class="card">
+            <h3>Đặt lại số xu</h3>
+            <form id="coinForm" class="field" style="margin-top: 16px">
+              <div class="field-row">
+                <div class="field">
+                  <label for="targetProfileInput">Profile ID</label>
+                  <input
+                    id="targetProfileInput"
+                    type="text"
+                    placeholder="Profile ID cần chỉnh"
+                    required
+                  />
+                </div>
+                <div class="field">
+                  <label for="coinInput">Số xu mới</label>
+                  <input
+                    id="coinInput"
+                    type="number"
+                    min="0"
+                    step="1"
+                    placeholder="0"
+                    required
+                  />
+                </div>
+              </div>
+              <button class="action" type="submit">Cập nhật xu</button>
+            </form>
+            <div id="coinMessage" class="message hidden"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const SUPABASE_URL = "https://pnyjxbrkiifrsrtmnxro.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueWp4YnJraWlmcnNydG1ueHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MDgxOTAsImV4cCI6MjA4ODE4NDE5MH0.uCYdN3SaANJZc5XqT1AdcbjlrFHCY7xaS2ff_y4z84c";
+      const OWNER_EMAIL = "tuantk2009@gmail.com";
+      const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { detectSessionInUrl: false, autoRefreshToken: false },
+      });
+
+      const userLabel = document.getElementById("userLabel");
+      const accessMessage = document.getElementById("accessMessage");
+      const coinMessage = document.getElementById("coinMessage");
+      const profileSummary = document.getElementById("profileSummary");
+      const lookupForm = document.getElementById("lookupForm");
+      const coinForm = document.getElementById("coinForm");
+      const refreshBtn = document.getElementById("refreshBtn");
+      const profileIdInput = document.getElementById("profileIdInput");
+      const targetProfileInput = document.getElementById("targetProfileInput");
+      const coinInput = document.getElementById("coinInput");
+
+      let session = null;
+      let isReviewer = false;
+
+      function setMessage(node, text, isError = false) {
+        node.textContent = text || "";
+        node.classList.toggle("hidden", !text);
+        node.style.borderColor = isError ? "#efc1c1" : "";
+        node.style.background = isError ? "#fff1f1" : "";
+        node.style.color = isError ? "#8d2f2f" : "";
+      }
+
+      function setFormsEnabled(enabled) {
+        lookupForm
+          .querySelectorAll("input, button")
+          .forEach((el) => (el.disabled = !enabled));
+        coinForm
+          .querySelectorAll("input, button")
+          .forEach((el) => (el.disabled = !enabled));
+      }
+
+      function renderProfile(profile) {
+        profileSummary.classList.remove("hidden");
+        profileSummary.innerHTML = `
+          <div><strong>${profile.username || "Không có username"}</strong></div>
+          <div class="muted">ID: ${profile.id}</div>
+          <div>Xu hiện tại: <strong>${Number(profile.coin || 0)}</strong></div>
+        `;
+        targetProfileInput.value = profile.id;
+        coinInput.value = Number(profile.coin || 0);
+      }
+
+      async function checkReviewerAccess() {
+        if (!session) return false;
+        const email = (session.user.email || "").toLowerCase();
+        if (email === OWNER_EMAIL) return true;
+
+        const { data, error } = await client
+          .from("combat_admins")
+          .select("user_id")
+          .eq("user_id", session.user.id)
+          .eq("is_active", true)
+          .maybeSingle();
+
+        if (error) {
+          setMessage(
+            accessMessage,
+            `Không thể kiểm tra quyền admin: ${error.message}`,
+            true,
+          );
+          return false;
+        }
+
+        return Boolean(data);
+      }
+
+      async function syncAccess(nextSession) {
+        session = nextSession;
+        profileSummary.classList.add("hidden");
+        setFormsEnabled(false);
+
+        if (!session) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        userLabel.textContent = session.user.email || "Signed in";
+        isReviewer = await checkReviewerAccess();
+        setFormsEnabled(isReviewer);
+        setMessage(
+          accessMessage,
+          isReviewer
+            ? "Bạn có quyền active combat admin để chỉnh xu."
+            : "Bạn không có quyền active combat admin. Không thể chỉnh xu.",
+          !isReviewer,
+        );
+      }
+
+      async function lookupProfile(event) {
+        event.preventDefault();
+        setMessage(coinMessage, "");
+        const profileId = profileIdInput.value.trim();
+        if (!profileId || !isReviewer) return;
+
+        const { data, error } = await client
+          .from("profiles")
+          .select("id, username, coin")
+          .eq("id", profileId)
+          .maybeSingle();
+
+        if (error || !data) {
+          profileSummary.classList.add("hidden");
+          setMessage(
+            coinMessage,
+            `Không tìm thấy profile: ${error?.message || profileId}`,
+            true,
+          );
+          return;
+        }
+
+        renderProfile(data);
+      }
+
+      async function updateCoin(event) {
+        event.preventDefault();
+        setMessage(coinMessage, "");
+        const targetUserId = targetProfileInput.value.trim();
+        const newCoin = Number(coinInput.value);
+
+        if (!targetUserId || !Number.isInteger(newCoin) || newCoin < 0) {
+          setMessage(
+            coinMessage,
+            "Profile ID hợp lệ và số xu không âm là bắt buộc.",
+            true,
+          );
+          return;
+        }
+
+        const { data, error } = await client.rpc("admin_set_user_coin", {
+          target_user_id: targetUserId,
+          new_coin: newCoin,
+        });
+
+        if (error) {
+          setMessage(
+            coinMessage,
+            `Không thể cập nhật xu: ${error.message}`,
+            true,
+          );
+          return;
+        }
+
+        const updated = Array.isArray(data) ? data[0] : data;
+        if (updated) renderProfile(updated);
+        setMessage(coinMessage, `Đã cập nhật xu thành ${newCoin}.`);
+      }
+
+      lookupForm.addEventListener("submit", lookupProfile);
+      coinForm.addEventListener("submit", updateCoin);
+      refreshBtn.addEventListener("click", () => syncAccess(session));
+
+      client.auth.onAuthStateChange((_event, nextSession) => {
+        syncAccess(nextSession);
+      });
+
+      async function bootstrap() {
+        try {
+          const {
+            data: { session: currentSession },
+            error,
+          } = await client.auth.getSession();
+          if (error) throw error;
+          await syncAccess(currentSession);
+        } catch (error) {
+          setMessage(
+            accessMessage,
+            `Không thể khởi tạo phiên đăng nhập: ${error.message}`,
+            true,
+          );
+        }
+      }
+
+      bootstrap();
+    </script>
+  </body>
+</html>

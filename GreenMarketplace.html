@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <link rel="icon" type="image/x-icon" href="resources/Favicon.png" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Green Marketplace | Green Truth</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      :root {
+        --bg: #f6f7f4;
+        --panel: #fffaf0;
+        --line: #dde4d5;
+        --text: #252f42;
+        --muted: #6b7280;
+        --accent: #6dbd5f;
+        --forest: #173721;
+        --lime: #d2f26b;
+        --danger: #ef4444;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Poppins", "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .shell {
+        min-height: 100dvh;
+        display: grid;
+        grid-template-columns: 240px 1fr;
+      }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100dvh;
+        background: #f0f1ef;
+        border-right: 1px solid var(--line);
+        padding: 18px 14px;
+        overflow-y: auto;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 1.2rem;
+        padding: 8px 10px;
+        margin-bottom: 16px;
+      }
+      .brand-logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        object-fit: cover;
+      }
+      .nav {
+        display: grid;
+        gap: 8px;
+      }
+      .nav a {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 12px;
+        border-radius: 10px;
+        color: #596074;
+        font-size: 0.92rem;
+        font-weight: 600;
+      }
+      .nav a.active {
+        background: var(--accent);
+        color: #fff;
+      }
+      .main {
+        min-width: 0;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        min-height: 64px;
+        background: #f6f7f4;
+        border-bottom: 1px solid var(--line);
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .topbar h1 {
+        margin: 0;
+        font-size: 1.7rem;
+      }
+      .user-area {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      button,
+      .btn {
+        border: 0;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-weight: 800;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+      }
+      .btn-primary {
+        background: var(--forest);
+        color: white;
+      }
+      .btn-ghost {
+        background: #fff;
+        border: 1px solid var(--line);
+        color: var(--forest);
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      #darkToggle,
+      .mobile-menu-toggle {
+        border: 1px solid #d1d7cc;
+        background: #fff;
+        color: #3b4659;
+        border-radius: 999px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+      }
+      .mobile-menu-toggle {
+        display: none;
+      }
+      .workspace {
+        padding: clamp(16px, 3vw, 34px);
+        display: grid;
+        gap: 18px;
+        background:
+          radial-gradient(
+            circle at 15% 10%,
+            rgba(210, 242, 107, 0.34),
+            transparent 28%
+          ),
+          linear-gradient(
+            135deg,
+            rgba(255, 250, 240, 0.95),
+            rgba(229, 241, 216, 0.92)
+          ),
+          url("resources/SolutionSectionBackground.png");
+        background-size: auto, auto, cover;
+        min-height: calc(100dvh - 64px);
+      }
+      .hero {
+        background: linear-gradient(135deg, #173721, #2f7d46);
+        color: white;
+        border-radius: 28px;
+        padding: 28px;
+        display: grid;
+        gap: 12px;
+        box-shadow: 0 20px 50px rgba(23, 55, 33, 0.2);
+      }
+      .hero h2 {
+        font-size: clamp(2rem, 5vw, 4rem);
+        line-height: 0.95;
+        margin: 0;
+      }
+      .hero p {
+        max-width: 760px;
+        color: #e8f6df;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      .stat,
+      .panel,
+      .card {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(221, 228, 213, 0.9);
+        border-radius: 22px;
+        padding: 18px;
+        box-shadow: 0 14px 35px rgba(37, 47, 66, 0.08);
+      }
+      .stat small,
+      .eyebrow {
+        color: var(--muted);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+      }
+      .stat strong {
+        display: block;
+        font-size: 1.7rem;
+        color: var(--forest);
+        margin-top: 4px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .filter-btn.active {
+        background: var(--forest);
+        color: white;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr));
+        gap: 16px;
+      }
+      .card {
+        display: grid;
+        gap: 12px;
+      }
+      .card-img {
+        height: 160px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #d2f26b, #6dbd5f);
+        display: grid;
+        place-items: center;
+        color: #173721;
+        font-size: 3rem;
+        overflow: hidden;
+      }
+      .card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .badge {
+        width: max-content;
+        border-radius: 999px;
+        padding: 6px 10px;
+        background: #e6f7dc;
+        color: #256029;
+        font-weight: 800;
+        font-size: 0.78rem;
+      }
+      .price {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 10px;
+        background: white;
+        font-weight: 800;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      .form-grid label {
+        display: grid;
+        gap: 6px;
+        font-weight: 700;
+      }
+      .form-grid input,
+      .form-grid select,
+      .form-grid textarea {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 11px;
+        background: white;
+        font: inherit;
+      }
+      .full {
+        grid-column: 1/-1;
+      }
+      .output {
+        white-space: pre-wrap;
+        background: #0f172a;
+        color: #d1fae5;
+        border-radius: 16px;
+        padding: 14px;
+        overflow: auto;
+      }
+      .empty {
+        color: var(--muted);
+        text-align: center;
+        padding: 24px;
+      }
+      .mobile-menu-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 20, 28, 0.4);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        z-index: 900;
+      }
+      .dark {
+        --bg: #171717;
+        --panel: #242424;
+        --line: #3f3f3f;
+        --text: #f3f4f6;
+        --muted: #a3a3a3;
+        background: #171717;
+      }
+      .dark .sidebar,
+      .dark .topbar,
+      .dark .stat,
+      .dark .panel,
+      .dark .card,
+      .dark .btn-ghost,
+      .dark input,
+      .dark select,
+      .dark textarea {
+        background: #242424;
+        color: var(--text);
+        border-color: #3f3f3f;
+      }
+      .dark .nav a {
+        color: #d4d4d4;
+      }
+      .dark .workspace {
+        background: #171717;
+      }
+      @media (max-width: 768px) {
+        .shell {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          inset: 0 auto 0 0;
+          width: min(280px, 84vw);
+          transform: translateX(-100%);
+          transition: 0.25s;
+          z-index: 1000;
+        }
+        .mobile-menu-toggle {
+          display: inline-flex;
+        }
+        .menu-open {
+          overflow: hidden;
+        }
+        .menu-open .sidebar {
+          transform: translateX(0);
+        }
+        .menu-open .mobile-menu-overlay {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+        .topbar {
+          display: grid;
+          grid-template-columns: 1fr auto;
+        }
+        .user-area {
+          grid-column: 1/-1;
+        }
+        .workspace {
+          padding: 12px;
+        }
+        .hero {
+          padding: 20px;
+        }
+      }
+    </style>
+      <script src="auth-guard.js"></script>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" id="appSidebar">
+        <div class="brand">
+          <img
+            class="brand-logo"
+            src="resources/logo_type_shit.png"
+            alt="Green Truth logo"
+          /><span>Green Truth</span>
+        </div>
+        <nav class="nav">
+          <a href="dashboard.html"
+            ><span class="material-symbols-outlined">dashboard</span>Bảng Điều
+            Khiển</a
+          >
+          <a href="profile.html"
+            ><span class="material-symbols-outlined">person</span>Hồ Sơ</a
+          >
+          <a href="DigitalAssets.html"
+            ><span class="material-symbols-outlined">storage</span>Tài Sản Số</a
+          >
+          <a href="GoGreenMap.html"
+            ><span class="material-symbols-outlined">map</span>Bản Đồ Go
+            Green</a
+          >
+          <a class="active" href="GreenMarketplace.html"
+            ><span class="material-symbols-outlined">storefront</span>Chợ
+            Xanh</a
+          >
+          <a href="GreenCalculator.html"
+            ><span class="material-symbols-outlined">calculate</span>Máy Tính
+            Xanh</a
+          >
+          <a href="GreenCoinShop.html"
+            ><span class="material-symbols-outlined">redeem</span>Green Coin
+            Shop</a
+          >
+          <a href="GreenCombat.html"
+            ><span class="material-symbols-outlined">sports_esports</span>So Tài
+            Xanh</a
+          >
+          <a href="Chatbot.html"
+            ><span class="material-symbols-outlined">smart_toy</span>Chatbot</a
+          >
+          <a href="ConfirmAction.html"
+            ><span class="material-symbols-outlined">check_box</span>Xác Nhận
+            Hành Động</a
+          >
+          <a id="signOutBtn" href="login.html"
+            ><span class="material-symbols-outlined">logout</span>Đăng Xuất</a
+          >
+        </nav>
+      </aside>
+      <section class="main">
+        <header class="topbar">
+          <h1>Chợ Xanh</h1>
+          <div class="user-area">
+            <button
+              id="mobileMenuToggle"
+              class="mobile-menu-toggle"
+              type="button"
+              aria-label="Mở menu"
+            >
+              <span class="material-symbols-outlined">menu</span>
+            </button>
+            <button id="darkToggle" type="button" aria-label="Bật/tắt tối">
+              🌙
+            </button>
+            <span id="userLabel">Đang tải...</span>
+          </div>
+        </header>
+        <main class="workspace">
+          <section class="hero">
+            <p class="eyebrow">Green Marketplace</p>
+            <h2>Chợ Phi Tập Trung</h2>
+            <p>
+              Kết nối Người bán xanh với Học sinh/Giáo viên. Thanh toán bằng
+              Eco-Credits 100% hoặc kết hợp Eco-Credits + tiền mặt khi nhận
+              hàng.
+            </p>
+            <div class="toolbar">
+              <a class="btn btn-primary" href="#sellerPanel">Đăng bán đồ cũ</a
+              ><button class="btn btn-ghost" id="refreshBtn" type="button">
+                Tải lại chợ
+              </button>
+            </div>
+          </section>
+          <section class="stats">
+            <article class="stat">
+              <small>Ví Eco-Credits</small><strong id="ecoBalance">0</strong>
+            </article>
+            <article class="stat">
+              <small>Eco-Gift</small><strong>0đ</strong>
+            </article>
+            <article class="stat">
+              <small>Thanh toán</small><strong>Điểm + tiền</strong>
+            </article>
+          </section>
+          <section class="panel">
+            <div class="toolbar" id="filters">
+              <button class="filter-btn active" data-filter="all" type="button">
+                Tất cả
+              </button>
+              <button class="filter-btn" data-filter="eco_gift" type="button">
+                Eco-Gift
+              </button>
+              <button
+                class="filter-btn"
+                data-filter="second_hand"
+                type="button"
+              >
+                Tiệm đồ cũ
+              </button>
+              <button
+                class="filter-btn"
+                data-filter="partner_store"
+                type="button"
+              >
+                Gian hàng Xanh
+              </button>
+            </div>
+          </section>
+          <section class="grid" id="marketGrid">
+            <div class="empty">Đang tải sản phẩm...</div>
+          </section>
+          <section class="panel" id="sellerPanel">
+            <p class="eyebrow">Second-hand Shop</p>
+            <h2>Đăng bán đồ cũ</h2>
+            <form class="form-grid" id="itemForm">
+              <label
+                >Tên món<input
+                  id="titleInput"
+                  required
+                  placeholder="Sách cũ, truyện tranh, đồng phục..."
+              /></label>
+              <label
+                >Phân khu<select id="categoryInput">
+                  <option value="second_hand">Tiệm đồ cũ</option>
+                  <option value="partner_store">Gian hàng Xanh</option>
+                  <option value="eco_gift">Eco-Gift</option>
+                </select></label
+              >
+              <label
+                >Tiền mặt (VNĐ)<input
+                  id="cashInput"
+                  type="number"
+                  min="0"
+                  value="0"
+              /></label>
+              <label
+                >Eco-Credits<input
+                  id="ecoInput"
+                  type="number"
+                  min="0"
+                  value="0"
+              /></label>
+              <label
+                >Số lượng<input id="qtyInput" type="number" min="1" value="1"
+              /></label>
+              <label
+                >Ảnh URL<input id="imageInput" placeholder="https://..."
+              /></label>
+              <label class="full"
+                >Mô tả<textarea id="descInput" rows="3"></textarea>
+              </label>
+              <label class="full"
+                >Ghi chú nhận hàng<textarea
+                  id="pickupInput"
+                  rows="2"
+                  placeholder="VD: nhận tại lớp 10A1 / văn phòng Đoàn..."
+                ></textarea>
+              </label>
+              <button class="btn btn-primary full" type="submit">
+                Đăng lên Chợ Xanh
+              </button>
+            </form>
+            <div class="output" id="output" hidden></div>
+          </section>
+        </main>
+      </section>
+    </div>
+    <div id="mobileMenuOverlay" class="mobile-menu-overlay" hidden></div>
+    <script>
+      const SUPABASE_URL = "https://pnyjxbrkiifrsrtmnxro.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBueWp4YnJraWlmcnNydG1ueHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MDgxOTAsImV4cCI6MjA4ODE4NDE5MH0.uCYdN3SaANJZc5XqT1AdcbjlrFHCY7xaS2ff_y4z84c";
+      const _supabase =
+        window.supabaseClient ||
+        supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      let currentUser = null,
+        currentFilter = "all",
+        items = [];
+      const sampleItems = [
+        {
+          id: "sample-eco-gift",
+          title: "Vở tái chế Eco-Gift",
+          description: "Phần thưởng 0 đồng từ Green Truth.",
+          image_url: null,
+          category: "eco_gift",
+          price_cash: 0,
+          price_eco_credits: 120,
+          quantity: 20,
+          pickup_note: "Nhận tại văn phòng Đoàn trường",
+        },
+        {
+          id: "sample-bottle",
+          title: "Bình nước inox giảm nhựa",
+          description: "Thanh toán hỗn hợp: 20k + 800 Eco-Credits.",
+          image_url: null,
+          category: "partner_store",
+          price_cash: 20000,
+          price_eco_credits: 800,
+          quantity: 10,
+          pickup_note: "Nhận tại gian hàng đối tác",
+        },
+        {
+          id: "sample-books",
+          title: "Sách giáo khoa cũ lớp 10",
+          description: "Second-hand: sách còn tốt, khuyến khích tái sử dụng.",
+          image_url: null,
+          category: "second_hand",
+          price_cash: 30000,
+          price_eco_credits: 100,
+          quantity: 1,
+          pickup_note: "Hẹn nhận tại sân trường",
+        },
+      ];
+      const $ = (id) => document.getElementById(id);
+      const fmt = (n) => Number(n || 0).toLocaleString("vi-VN");
+      const catLabel = {
+        eco_gift: "Eco-Gift",
+        second_hand: "Tiệm đồ cũ",
+        partner_store: "Gian hàng Xanh",
+      };
+      function show(msg) {
+        $("output").hidden = false;
+        $("output").textContent = msg;
+      }
+      function friendlyError(error) {
+        if (!error) return "Không rõ lỗi";
+        return [error.message, error.details, error.hint, error.code]
+          .filter(Boolean)
+          .join("\n");
+      }
+      async function ensureProfile() {
+        if (!currentUser || !_supabase) return;
+        const { error } = await _supabase.from("profiles").upsert(
+          {
+            id: currentUser.id,
+            email: currentUser.email,
+          },
+          { onConflict: "id", ignoreDuplicates: true },
+        );
+        if (error) console.warn("ensureProfile", error);
+      }
+      async function applySession(session) {
+        if (!session) {
+          currentUser = null;
+          $("userLabel").textContent = "Chưa đăng nhập";
+          $("ecoBalance").textContent = "0";
+          location.href = "login.html";
+          return;
+        }
+        currentUser = session.user;
+        $("userLabel").textContent = session.user.email;
+        await loadProfile();
+        await loadItems();
+      }
+      function initUi() {
+        const theme = localStorage.getItem("theme");
+        if (theme === "dark") document.body.classList.add("dark");
+        $("darkToggle").onclick = () => {
+          document.body.classList.toggle("dark");
+          localStorage.setItem(
+            "theme",
+            document.body.classList.contains("dark") ? "dark" : "light",
+          );
+        };
+        const setMenu = (open) => {
+          document.body.classList.toggle("menu-open", open);
+          $("mobileMenuOverlay").hidden = !open;
+        };
+        $("mobileMenuToggle").onclick = () =>
+          setMenu(!document.body.classList.contains("menu-open"));
+        $("mobileMenuOverlay").onclick = () => setMenu(false);
+        document
+          .querySelectorAll(".nav a")
+          .forEach((a) => (a.onclick = () => setMenu(false)));
+      }
+      function render() {
+        const grid = $("marketGrid");
+        const shown = items.filter(
+          (x) => currentFilter === "all" || x.category === currentFilter,
+        );
+        if (!shown.length) {
+          grid.innerHTML =
+            '<div class="empty">Chưa có sản phẩm trong phân khu này.</div>';
+          return;
+        }
+        grid.innerHTML = shown
+          .map((item) => {
+            const isOwner =
+              currentUser &&
+              item.seller_id &&
+              item.seller_id === currentUser.id;
+            const actions = isOwner
+              ? `<button class="btn btn-danger" data-delete="${item.id}" type="button">Xóa bài</button>`
+              : `<button class="btn btn-primary" data-buy="${item.id}" type="button">Đặt / đổi ngay</button>`;
+            return `<article class="card"><div class="card-img">${item.image_url ? `<img src="${item.image_url}" alt="${item.title}">` : '<span class="material-symbols-outlined">redeem</span>'}</div><span class="badge">${catLabel[item.category] || item.category}</span><h3>${item.title}</h3><p>${item.description || "Sản phẩm xanh / tái sử dụng trong cộng đồng Green Truth."}</p><div class="price"><span class="pill">${fmt(item.price_cash)}đ</span><span class="pill">${fmt(item.price_eco_credits)} Eco-Credits</span></div><small>Còn ${item.quantity} · ${item.pickup_note || "Liên hệ người bán để nhận hàng"}</small>${actions}</article>`;
+          })
+          .join("");
+        grid
+          .querySelectorAll("[data-buy]")
+          .forEach((btn) => (btn.onclick = () => reserveItem(btn.dataset.buy)));
+        grid
+          .querySelectorAll("[data-delete]")
+          .forEach(
+            (btn) => (btn.onclick = () => deleteItem(btn.dataset.delete)),
+          );
+      }
+      async function loadProfile() {
+        if (!_supabase || !currentUser) return;
+        await ensureProfile();
+        const { data, error } = await _supabase
+          .from("profiles")
+          .select("eco_credits,email,username")
+          .eq("id", currentUser.id)
+          .maybeSingle();
+        if (error && error.code !== "PGRST116") console.warn(error);
+        $("ecoBalance").textContent = fmt(data?.eco_credits || 0);
+      }
+      async function loadItems() {
+        const { data, error } = await _supabase
+          .from("marketplace_items")
+          .select("*")
+          .eq("status", "active")
+          .order("created_at", { ascending: false });
+        if (error) {
+          console.warn("marketplace load", error);
+          items = JSON.parse(
+            localStorage.getItem("marketplaceLocalItems") || "[]",
+          ).concat(sampleItems);
+          render();
+          show(
+            `Đang chạy chế độ demo/local. DB chưa sẵn sàng:\n${friendlyError(error)}\n\nMuốn lưu thật: chạy supabase/green_marketplace_schema.sql trong Supabase SQL Editor.`,
+          );
+          return;
+        }
+        const localItems = JSON.parse(
+          localStorage.getItem("marketplaceLocalItems") || "[]",
+        );
+        items = [...localItems, ...(data && data.length ? data : sampleItems)];
+        render();
+      }
+      async function reserveItem(id) {
+        const item = items.find((x) => x.id === id);
+        if (!item) return;
+        if (
+          !confirm(
+            `Đặt ${item.title}?\nThanh toán: ${fmt(item.price_cash)}đ + ${fmt(item.price_eco_credits)} Eco-Credits.`,
+          )
+        )
+          return;
+        if (
+          String(id).startsWith("sample-") ||
+          String(id).startsWith("local-")
+        ) {
+          alert(
+            "Demo/local: đã ghi nhận đặt hàng. Tiền mặt thanh toán khi nhận hàng.",
+          );
+          return;
+        }
+        const { data, error } = await _supabase.rpc(
+          "reserve_marketplace_item",
+          { p_item_id: id, p_note: "Đặt từ GreenMarketplace.html" },
+        );
+        if (error) {
+          alert(error.message);
+          return;
+        }
+        alert("Đã đặt hàng. Tiền mặt thanh toán khi nhận hàng.");
+        await loadProfile();
+        await loadItems();
+        show(JSON.stringify(data, null, 2));
+      }
+      async function deleteItem(id) {
+        const item = items.find((x) => x.id === id);
+        if (!item) return;
+        if (!confirm(`Xóa bài đăng "${item.title}"?`)) return;
+
+        if (String(id).startsWith("local-")) {
+          const local = JSON.parse(
+            localStorage.getItem("marketplaceLocalItems") || "[]",
+          ).filter((x) => x.id !== id);
+          localStorage.setItem("marketplaceLocalItems", JSON.stringify(local));
+          items = items.filter((x) => x.id !== id);
+          render();
+          show("Đã xóa bài local/demo.");
+          return;
+        }
+
+        const { data, error } = await _supabase.rpc(
+          "hide_own_marketplace_item",
+          { p_item_id: id },
+        );
+        if (error) {
+          alert(friendlyError(error));
+          return;
+        }
+        items = items.filter((x) => x.id !== id);
+        render();
+        show(`Đã xóa/ẩn bài đăng:\n${JSON.stringify(data, null, 2)}`);
+      }
+      async function createItem(e) {
+        if (e?.preventDefault) e.preventDefault();
+        const payload = {
+          seller_id: currentUser?.id || null,
+          title: $("titleInput").value.trim(),
+          category: $("categoryInput").value,
+          price_cash: Number($("cashInput").value || 0),
+          price_eco_credits: Number($("ecoInput").value || 0),
+          quantity: Number($("qtyInput").value || 1),
+          image_url: $("imageInput").value.trim() || null,
+          description: $("descInput").value.trim() || null,
+          pickup_note: $("pickupInput").value.trim() || null,
+        };
+        if (!payload.title) {
+          show("Vui lòng nhập tên món.");
+          return;
+        }
+        const form = e?.currentTarget || $("itemForm");
+        const saveLocal = (reason) => {
+          const local = JSON.parse(
+            localStorage.getItem("marketplaceLocalItems") || "[]",
+          );
+          const item = {
+            ...payload,
+            id: `local-${Date.now()}`,
+            status: "active",
+            created_at: new Date().toISOString(),
+          };
+          local.unshift(item);
+          localStorage.setItem("marketplaceLocalItems", JSON.stringify(local));
+          items = [item, ...items];
+          form.reset();
+          $("cashInput").value = 0;
+          $("ecoInput").value = 0;
+          $("qtyInput").value = 1;
+          render();
+          show(
+            `Đã đăng ở chế độ local/demo.\n${reason || ""}\n\n${JSON.stringify(item, null, 2)}`,
+          );
+          return item;
+        };
+        const localItem = saveLocal(
+          "Đã hiển thị ngay trên chợ. DB sẽ sync nếu Supabase/schema sẵn sàng.",
+        );
+        if (!currentUser) {
+          return;
+        }
+        await ensureProfile();
+        const { data, error } = await _supabase.rpc("create_marketplace_item", {
+          p_title: payload.title,
+          p_category: payload.category,
+          p_price_cash: payload.price_cash,
+          p_price_eco_credits: payload.price_eco_credits,
+          p_quantity: payload.quantity,
+          p_image_url: payload.image_url,
+          p_description: payload.description,
+          p_pickup_note: payload.pickup_note,
+        });
+        if (error) {
+          console.error("marketplace insert", error, payload);
+          show(
+            `Đã đăng local nhưng DB sync lỗi:\n${friendlyError(error)}\n\nChạy lại supabase/green_marketplace_schema.sql trong Supabase SQL Editor để tạo RPC create_marketplace_item.\n\n${JSON.stringify(localItem, null, 2)}`,
+          );
+          return;
+        }
+        show(`Đã đăng local + sync DB:\n${JSON.stringify(data, null, 2)}`);
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        initUi();
+        items = JSON.parse(
+          localStorage.getItem("marketplaceLocalItems") || "[]",
+        ).concat(sampleItems);
+        render();
+        $("refreshBtn").onclick = loadItems;
+        $("itemForm").addEventListener("submit", createItem);
+        document
+          .querySelector('#itemForm button[type="submit"]')
+          .addEventListener("click", (e) => {
+            if ($("itemForm").requestSubmit) return;
+            e.preventDefault();
+            createItem(e);
+          });
+        $("filters").onclick = (e) => {
+          const f = e.target.dataset.filter;
+          if (!f) return;
+          currentFilter = f;
+          document
+            .querySelectorAll(".filter-btn")
+            .forEach((b) =>
+              b.classList.toggle("active", b.dataset.filter === f),
+            );
+          render();
+        };
+        $("signOutBtn").onclick = async (e) => {
+          e.preventDefault();
+          await _supabase.auth.signOut();
+          location.href = "login.html";
+        };
+        _supabase.auth.onAuthStateChange(async (_, session) =>
+          applySession(session),
+        );
+        _supabase.auth
+          .getSession()
+          .then(({ data: { session } }) => applySession(session));
+      });
+    </script>
+  </body>
+</html>

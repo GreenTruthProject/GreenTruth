@@ -190,7 +190,112 @@
           grid-template-columns: 1fr;
         }
       }
+
+      /* Responsive hardening */
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      img,
+      video,
+      iframe,
+      canvas,
+      svg,
+      table {
+        max-width: 100%;
+      }
+      :where(
+        .shell,
+        .main,
+        .sidebar,
+        .topbar,
+        .card,
+        .panel,
+        .grid,
+        form,
+        table
+      ) {
+        min-width: 0;
+      }
+      :where(
+        h1,
+        h2,
+        h3,
+        p,
+        span,
+        a,
+        button,
+        td,
+        th,
+        li,
+        label,
+        input,
+        textarea,
+        select
+      ) {
+        overflow-wrap: anywhere;
+      }
+      :where(a, button, input, select, textarea) {
+        min-height: 44px;
+      }
+      .shell {
+        min-height: 100dvh;
+        grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+      }
+      .sidebar {
+        height: 100dvh;
+      }
+      .main {
+        min-width: 0;
+        overflow-x: clip;
+      }
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      @media (max-width: 900px) {
+        .shell {
+          display: block;
+          min-height: 100dvh;
+        }
+        .sidebar {
+          position: static;
+          width: 100%;
+          height: auto;
+          max-height: none;
+        }
+        .main {
+          width: 100%;
+          padding: 12px;
+        }
+        .topbar {
+          position: sticky;
+          top: 0;
+          z-index: 50;
+          display: grid;
+          gap: 10px;
+        }
+        .grid,
+        .field-row {
+          grid-template-columns: 1fr !important;
+        }
+        .card,
+        .panel {
+          width: 100%;
+          max-width: 100%;
+          padding: clamp(14px, 4vw, 20px);
+        }
+      }
     </style>
+      <script src="auth-guard.js"></script>
   </head>
   <body>
     <div class="shell">
@@ -215,6 +320,9 @@
           <a href="GreenCombatReview.html"
             ><span class="material-symbols-outlined">fact_check</span>Duyệt
             Submission</a
+          >
+          <a href="GreenCombatCoinsAdmin.html"
+            ><span class="material-symbols-outlined">paid</span>Coin Admin</a
           >
           <a href="login.html"
             ><span class="material-symbols-outlined">logout</span>Đăng Xuất</a
